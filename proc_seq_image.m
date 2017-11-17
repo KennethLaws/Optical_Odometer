@@ -23,8 +23,8 @@ x1 = (imageRes(2) - w)/2;
 y1 = imageRes(1) - h;
 
 % set the file names
-imgFile1 = '../../images/Driveway2/10172917_run4_2017-10-17-100449-0000.pgm';
-imgFile2 = '../../images/Driveway2/10172917_run4_2017-10-17-100454-0000.pgm';
+imgFile1 = './sample_image/10172917_run4_2017-10-17-100449-0000.pgm';
+imgFile2 = './sample_image/10172917_run4_2017-10-17-100454-0000.pgm';
 
 % load in the images
 tic;
