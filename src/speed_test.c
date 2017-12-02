@@ -63,7 +63,7 @@ uint16_t ncolors=0,pixDepth=0;
 int main(void){
 
 
-	fp = fopen("./sample_image/Image__2017-11-28__10-16-16.bmp", "rb");
+	fp = fopen("../sample_image/Image__2017-11-28__10-16-16.bmp", "rb");
 
 
 	// read in the basic information header (14 bytes)

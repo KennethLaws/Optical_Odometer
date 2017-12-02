@@ -19,12 +19,13 @@ ECO := @echo
 # C_FLAGS = -g -Os -Wall -fshort-enums
 # C_FLAGS += -DDEBUG
 
-
+# ----------------- makefile 1 ---------------
 # TARGET=OUT
 
 # build: clean create_build_dir $(TARGET).hex
-build: speed_test.c
-	gcc -o speedtest.out speed_test.c
+# build: speed_test.c
+# 	gcc -o speedtest.out speed_test.c
+# --------------------------------------------
 
 # all: build flash
 # # reset: reset_via_usb launch
@@ -82,6 +83,14 @@ build: speed_test.c
 
 # hellomake: hellomake.o hellofunc.o
 #      $(CC) -o hellomake hellomake.o hellofunc.o -I.
+# -------------------- makefile 2 ----------------------
+
+CC=gcc
+CFLAGS=-I.
+
+build: speed_test.o
+	$(CC) -o speedtest.out speed_test.o $(CFLAGS)
+# -------------------- makefile 2 ----------------------
 
 # So now we've defined some constants CC and CFLAGS. It turns out these are 
 # special constants that communicate to make how we want to compile the files 
