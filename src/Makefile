@@ -2,7 +2,7 @@
 .PHONY: all clean
 
 # The program to build
-NAME       := SimpleGrab
+NAME       := ImageRecord
 
 # Installation directories for pylon
 PYLON_ROOT ?= /opt/pylon5
