@@ -23,7 +23,13 @@ yPix = 1920;
 x1 = (imageRes(2) - w)/2;
 y1 = imageRes(1) - h;
 
-imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
+if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
+    imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
+elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/calib2/')
+    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/calib2/';
+else
+    error('Image folder not found, update image path in script');
+end
 
 step = 1;       % keep track of image step
 
@@ -42,7 +48,7 @@ while 1
     % compute shift
     deltPosPix = [y1 - ypeak,x1 - xpeak];
     
-    dy_inches = dpix2dcm(y1,ypeak)
+    dy_inches = dpix2dcm(y1,ypeak);
 
     % generate plots and outputs
     if doplot
@@ -95,17 +101,14 @@ while 1
 
 
     % estimate signal to noise
-    rsqr = c.^2;
-    log_rsqr = log10(rsqr);
-    en = mean(mean(log_rsqr(1:100,1:100)));
-    sig = max(max(log_rsqr));
+    s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
+    snr_db = 10*log10(max(s)/std(s));        % signal to noise of power spectrum
 
-    fprintf('corellation statistics: mean = %0.2E, std = %0.2E peak = %0.2E \n', ...
-        mean(c(100:1500)), std(c(100:1500)), max_c);
-    fprintf('Signal to noise ratio = %0.3f dB\n', sig-en);
+    fprintf('Power spectrum statistics: std=%0.1E peak=%0.1E snr=%0.1f dB\n', ...
+        std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step, deltPosPix, dy_inches];
+    rslt(step,:) = [step, deltPosPix, dy_inches, snr_db];
     step = step + 1;
 end
 
