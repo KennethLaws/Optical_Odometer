@@ -16,3 +16,6 @@ fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
 
 figure(1), clf
 plot(rslt(rng,1),rslt(rng,4))
+ylabel('Distance per Frame Pair (m)');
+xlabel('Image Number')
+title('12/14/17 Test Calibration')

@@ -21,7 +21,7 @@ else
     error('Image folder not found, update image path in script');
 end
 
-imgFile1 = strcat(imgPath,'img_2017-12-14-100217_00.tmp');
+imgFile1 = strcat(imgPath,'img_2017-12-14-100226_49.tmp');
 
 
 tic;
