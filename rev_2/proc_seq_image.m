@@ -57,13 +57,15 @@ while 1
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
 
     % compute shift
-    deltPosPix = [y1 - ypeak,x1 - xpeak];
+    deltPosPix = [ypeak-y1,xpeak-x1];
     
     % transfor to caibrated measure of translation (m)
-    deltY = compDY(y1,ypeak,calib);
-    deltY = deltY * 2.67/2.59;
-    deltX = compDY(x1,xpeak,calib);
-    deltX = deltX * 2.67/2.59;
+    %deltY = compDY(y1,ypeak,calib);
+    %deltY = deltY * 2.67/2.59;
+    %deltX = compDY(x1,xpeak,calib);
+    %deltX = deltX * 2.67/2.59;
+    %deltPosPix = [72 35]  % debug test
+    deltPosMeters = compShift(deltPosPix,calib);
 
     % generate plots and outputs
     if doplot
@@ -110,14 +112,14 @@ while 1
     fprintf('processing matrix dimensions: (%d, %d)\n',yPix,xPix);
     fprintf('retrieved position: (%d, %d)\n',xpeak,ypeak);
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
-    fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltY,deltX);
+    fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltPosMeters);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
     % debugging test
-    if deltY > .025
+    %if deltY > .025
     %    pause
-    end
+    %end
 
     % estimate signal to noise
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
@@ -127,7 +129,7 @@ while 1
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step, deltPosPix, deltY, deltX, snr_db];
+    rslt(step,:) = [step, deltPosPix, deltPosMeters, snr_db];
 end
 
 save('seq_image_rslt', 'rslt');

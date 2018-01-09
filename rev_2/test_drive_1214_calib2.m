@@ -1,134 +1,35 @@
-% Process a selected calibration image to determine x y shift in position
-% this is a laborious process by hand of reading a tape measure in the
-% optical frame over a range of pixel shifts.  I probably could of used
-% much fewer points and still been certian ov linearity.
-%   After calibration is complete a function call retrieves the saved
-% result to use for computing shifts.  
-%
-% Returns
-% p = [intercept slope]  in cm
-
+% Calibration  
 % Kenneth Laws
 % 01/05/2017
+% Uses a set of images taken with tape measure in the image frames.  Frames
+% are first examined to make find range of images with good usable image of
+% tape measure in frame, then processed using proc_seq_image.  About half
+% of the images are used for calibraiton and the other half for validation.
+% The calibration image range results give total pixels travelled.  The
+% range of images are then manually examined to measure the difference in
+% positions of the registration mark on the tape between the first and last
+% images, giving the total distance translation.  The individual pixel 
+% translations for each image pair are summed to find the total pixel 
+% translation.  The calibration is returned as p = [slope, int=0] m/pix
+
 
 function p = test_Drive_1214_calib2
 
-doplot = 0;    
-startPix = 100;
-startPoint = 126.18;  % position in cm at pix = 100
+dataSet = 'Test_Drive_1214/calib2';
+calibRangeStep = 50:110;
+startImage = 'img_2017-12-14-100226_49.tmp';
+endImage = 'img_2017-12-14-100239_110.tmp';
 
+% distance travelled measured from sequential image shifts
+pixx = 10;      % translation x pix
+pixy = 2054;    % translation y pix
 
-if ~exist('calibData_1214.mat')
-    % define a subframe (smaller than maximum)
-    imageRes = [1920, 1200];
-    w = 256;    % width of subframe
-    h = 128;    % height of subframe
-    xPix = 1200;    % matrix dimensions for image processing factor of 2^n
-    yPix = 1920;
-    x1 = (imageRes(2) - w)/2;
-    %y1 = imageRes(1) - h;          % this location at the top of the frame did
-    %not work since the orientation of the camera apparrently has the top and
-    %bottom of fram reversed
-    y1 = 100;   % this location near the bottom of the image should allow for some reverse motion of
-    % vehicle and hopefully enough top image overlap
-    % evaluate frame calibration
-    
-    fileNum = 70;       % select the index of the first image
-    
-    if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
-        imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
-    elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/calib2/')
-        imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/calib2/';
-    else
-        error('Image folder not found, update image path in script');
-    end
-    
-    flist = dir([imgPath '*.*']);
-    % extract a cell array of logicals (1 if is directory)
-    dirset = {flist.isdir};
-    % convert this to an array of logicals
-    dirset = cell2mat(dirset);
-    % use this to get all folder names
-    foldNames = {flist(dirset).name};
-    
-    fileNames = {flist(~dirset).name};
-    nFiles = length(fileNames);
-    
-    f1 = strcat(imgPath, fileNames(fileNum));
-    f2 = strcat(imgPath, fileNames(fileNum + 1));
-    fnames = [f1 f2];
-    
-    % load in the images
-    % just making it simple by reusing old code.  Only need to use one image
-    [image_1, image_2] = load_images(fnames);
-    
-    % plot the first image
-    figure(1), clf, hold on, colormap gray
-    pcolor(image_1);
-    shading interp;
-    
-    % plot the subframe
-    plotrect(x1,y1,w,h,1);
-    
-    %plot a registration line
-    plot([800, 1200],[y1 y1],'r');
-    %axis([800 1000 50 150]);
-    %axis equal
-    
-    startPoint_in = 49 + 9.6/16;
-    ycalib = [];
-    ypix = [];
+% distance travelled measured directly from tape
+total_X = 0.0035;   % translation x m
+total_Y = 0.7191;   % translation y m
 
-    load('calibData.mat', 'ypix', 'ycalib');
+slope = total_Y/pixy; % calibrated slope m/pix
 
-    % step through calib points    for dy = 430:30:700
-    for dy = 100:100:1900
-        
-        %replot registration line
-        plot([800, 1200],[y1+dy y1+dy],'r');
-        axis([800 1000 dy 400+dy]);
-        sprintf('getting location for position %d pixels\n',y1+dy);
-        y = input('Enter registration line location (cm): ');
-        %y = y*2.54;     % inch to cm convertion
-        ycalib = [ycalib y];
-        ypix = [ypix y1+dy];
-        
-    end
-    
-    save('calibData.mat', 'ypix', 'ycalib');
-end
-    
-load('calibData_1214', 'ypix', 'ycalib');
-
-ycalib = ycalib - startPoint;
-ypix = ypix - startPix;
-
-% fit an analytic function to the measured resolution c(x)
-p = polyfit(ypix,ycalib,1);
-
-% remove the offset
-p(2) = 0;
-
-
-
-
-
-if doplot
-    fitVals = polyval(p,ypix);
-    figure(2), clf, hold on
-    plot(ypix,ycalib,'*');
-    
-    plot(ypix,fitVals)
-    xlabel('Distance from frame maximum (pixels)')
-    ylabel('Image resolution (pixels/inch)')
-    % 
-    txt = {};    
-    txt{1} = sprintf('c1 = %0.3e, c0 = %0.3e',p);
-    % txt{2} = sprintf('Frame Maximum = %d',fc);
-    text(600,175,txt)
-    
-    
-end
-
+p = [slope, 0];
 
 return
