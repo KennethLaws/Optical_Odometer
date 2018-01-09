@@ -11,11 +11,14 @@
 % Kenneth Laws
 % 01/05/2017
 
-function p = Test_Drive_1214_calib2
+function p = test_Drive_1214_calib2
 
-doplot = 0;
+doplot = 0;    
+startPix = 100;
+startPoint = 126.18;  % position in cm at pix = 100
 
-if ~exist('calibData.mat')
+
+if ~exist('calibData_1214.mat')
     % define a subframe (smaller than maximum)
     imageRes = [1920, 1200];
     w = 256;    % width of subframe
@@ -72,34 +75,42 @@ if ~exist('calibData.mat')
     %axis([800 1000 50 150]);
     %axis equal
     
-    startPoint = 126.18;  % position in cm at pix = 100
     startPoint_in = 49 + 9.6/16;
     ycalib = [];
     ypix = [];
 
-    load('calibData', 'ypix', 'ycalib');
+    load('calibData.mat', 'ypix', 'ycalib');
 
     % step through calib points    for dy = 430:30:700
-    for dy = 1230:30:1500
+    for dy = 100:100:1900
         
         %replot registration line
         plot([800, 1200],[y1+dy y1+dy],'r');
         axis([800 1000 dy 400+dy]);
         sprintf('getting location for position %d pixels\n',y1+dy);
         y = input('Enter registration line location (cm): ');
-        y = y*2.54;     % inch to cm convertion
+        %y = y*2.54;     % inch to cm convertion
         ycalib = [ycalib y];
         ypix = [ypix y1+dy];
         
     end
     
-    save('calibData', 'ypix', 'ycalib');
+    save('calibData.mat', 'ypix', 'ycalib');
 end
     
-load('calibData', 'ypix', 'ycalib');
+load('calibData_1214', 'ypix', 'ycalib');
+
+ycalib = ycalib - startPoint;
+ypix = ypix - startPix;
 
 % fit an analytic function to the measured resolution c(x)
 p = polyfit(ypix,ycalib,1);
+
+% remove the offset
+p(2) = 0;
+
+
+
 
 
 if doplot

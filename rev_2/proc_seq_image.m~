@@ -21,7 +21,8 @@ h = 128;    % height of subframe
 xPix = 1200;    % matrix dimensions for image processing factor of 2^n
 yPix = 1920;
 x1 = (imageRes(2) - w)/2;
-y1 = imageRes(1) - h;
+%y1 = imageRes(1) - h;
+y1 = 100;
 
 if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
     imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
@@ -32,6 +33,9 @@ else
 end
 
 step = 1;       % keep track of image step
+
+% get calibration data
+calib = test_drive_1214_calib2;
 
 while 1
     % set the file names
@@ -48,12 +52,13 @@ while 1
     % compute shift
     deltPosPix = [y1 - ypeak,x1 - xpeak];
     
-    dy_inches = dpix2dcm(y1,ypeak);
+    deltY = compDY(y1,ypeak,calib);
+    deltX = compDY(x1,xpeak,calib);
 
     % generate plots and outputs
     if doplot
         % plot the first image
-        figure(4), clf, hold on, colormap gray
+        figure(1), clf, hold on, colormap gray
         pcolor(image_1);
         shading interp;
 
@@ -95,10 +100,13 @@ while 1
     fprintf('processing matrix dimensions: (%d, %d)\n',yPix,xPix);
     fprintf('retrieved position: (%d, %d)\n',xpeak,ypeak);
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
+    fprintf('retrieved position shift: dy = %0.2e m, dx = %0 m\n',deltY,deltX);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
-
+    if deltY > .025
+        pause
+    end
 
     % estimate signal to noise
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
@@ -108,7 +116,7 @@ while 1
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step, deltPosPix, dy_inches, snr_db];
+    rslt(step,:) = [step, deltPosPix, deltY, snr_db];
     step = step + 1;
 end
 

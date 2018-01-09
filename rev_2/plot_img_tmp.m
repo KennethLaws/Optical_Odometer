@@ -12,8 +12,16 @@ clear all;
 
 
 % set the file names
-%imgFile1 = 'U:Test_Drive_1214\calib2\img_2017-12-14-100217_00.tmp';
-imgFile1 = '/Volumes/M2Ext/Test_Drive_1214/calib2/img_2017-12-14-100247_150.tmp';
+
+if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
+    imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
+elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/calib2/')
+    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/calib2/';
+else
+    error('Image folder not found, update image path in script');
+end
+
+imgFile1 = strcat(imgPath,'img_2017-12-14-100217_00.tmp');
 
 
 tic;
@@ -26,6 +34,9 @@ figure(1), clf, hold on, colormap gray
 pcolor(image_1);
 shading interp;
 axis equal
+
+% plot a registration line
+plot([200 1000],[100 100],'r');
 
 % y = 151;
 % d = 72.5;

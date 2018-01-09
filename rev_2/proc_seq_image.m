@@ -8,7 +8,7 @@
 % depend on the experiment parameters and this script is more general
 
 clear all;
-doplot = 1;
+doplot = 0;
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -21,7 +21,8 @@ h = 128;    % height of subframe
 xPix = 1200;    % matrix dimensions for image processing factor of 2^n
 yPix = 1920;
 x1 = (imageRes(2) - w)/2;
-y1 = imageRes(1) - h;
+%y1 = imageRes(1) - h;
+y1 = 100;
 
 if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
     imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
@@ -31,12 +32,22 @@ else
     error('Image folder not found, update image path in script');
 end
 
-step = 1;       % keep track of image step
+step = 0;       % keep track of image step
+
+% get calibration data
+calib = test_drive_1214_calib2;
 
 while 1
+    step = step + 1;
+
     % set the file names
     [p,fnames, done] = get_file_names(imgPath);
     if done, break; end
+    
+    % debugging test
+%     if step < 115
+%         continue
+%     end
     
     % load in the images
     [image_1, image_2] = load_images(fnames);
@@ -48,12 +59,16 @@ while 1
     % compute shift
     deltPosPix = [y1 - ypeak,x1 - xpeak];
     
-    dy_inches = dpix2dcm(y1,ypeak);
+    % transfor to caibrated measure of translation (m)
+    deltY = compDY(y1,ypeak,calib);
+    deltY = deltY * 2.67/2.59;
+    deltX = compDY(x1,xpeak,calib);
+    deltX = deltX * 2.67/2.59;
 
     % generate plots and outputs
     if doplot
         % plot the first image
-        figure(4), clf, hold on, colormap gray
+        figure(1), clf, hold on, colormap gray
         pcolor(image_1);
         shading interp;
 
@@ -95,10 +110,14 @@ while 1
     fprintf('processing matrix dimensions: (%d, %d)\n',yPix,xPix);
     fprintf('retrieved position: (%d, %d)\n',xpeak,ypeak);
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
+    fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltY,deltX);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
-
+    % debugging test
+    if deltY > .025
+    %    pause
+    end
 
     % estimate signal to noise
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
@@ -108,8 +127,7 @@ while 1
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step, deltPosPix, dy_inches, snr_db];
-    step = step + 1;
+    rslt(step,:) = [step, deltPosPix, deltY, deltX, snr_db];
 end
 
 save('seq_image_rslt', 'rslt');
