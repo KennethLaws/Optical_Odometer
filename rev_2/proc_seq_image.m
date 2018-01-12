@@ -24,14 +24,16 @@ x1 = (imageRes(2) - w)/2;
 %y1 = imageRes(1) - h;
 y1 = 100;
 
-if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
-    imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
-elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/calib2/')
-    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/calib2/';
+if exist('/Volumes/M2Ext/Test_Drive_1214/')
+    imgPath = '/Volumes/M2Ext/Test_Drive_1214/';
+elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/')
+    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/';
 else
     error('Image folder not found, update image path in script');
 end
-
+foldSpec = '101358';
+folder = ['img_2017_12-14-',foldSpec, '/'];
+imgPath = strcat(imgPath,folder);
 step = 0;       % keep track of image step
 
 % get calibration data
@@ -132,10 +134,18 @@ while 1
     rslt(step,:) = [step, deltPosPix, deltPosMeters, snr_db];
 end
 
-save('seq_image_rslt', 'rslt');
+rsltFile = ['seq_image_rslt_',foldSpec];
+if exist('.mat')
+    s = input('result file exists, overwrite (y/n): ','s');
+else
+    s = 'y';
+end
+if s == 'y'
+    save(rsltFile, 'rslt');
+end
 
-
-        
+% check the results
+plot_seqImg_rslt([rsltFile, '.mat'])
 
 
 

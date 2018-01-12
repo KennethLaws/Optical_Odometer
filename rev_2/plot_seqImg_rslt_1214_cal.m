@@ -38,5 +38,26 @@ fprintf('Calibration sequence\n');
 fprintf('Total pixel transition, x = %d pix\n',-pixx);
 fprintf('Total pixel transition, y = %d pix\n',-pixy);
 fprintf('Total distance travelled, x = %0.4f m\n',total_X);
-fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
+fprintf('Total distance travelled, y = %0.4f m\n\n',total_Y);
+
+% before the code below makes any sense you must
+% apply calibration and reprocess then evaluate validation set below
+img_start = 110;
+img_end = 141;
+rng = (img_start+1):(img_end+1);
+
+total_Y = sum(rslt(rng,4));
+total_X = sum(rslt(rng,5));
+pixx = sum(rslt(rng,3));
+pixy = sum(rslt(rng,2));
+
+fprintf('Validation sequence\n');
+fprintf('Total pixel transition, x = %d pix\n',-pixx);
+fprintf('Total pixel transition, y = %d pix\n',-pixy);
+fprintf('Total distance travelled, x = %0.4f m\n',total_X);
+fprintf('Total distance travelled, y = %0.4f m\n\n',total_Y);
+
+disp 'manually examine images to measure distance'
+y1 = input('enter registration line position for image in cm:');
+
 
