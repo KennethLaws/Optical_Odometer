@@ -3,15 +3,7 @@
 % Kenneth Laws
 % 12/14/2017
 
-
-clear all;
-
-% specify camera lens and setup
-
-
-
-
-% set the file names
+function plot_sing_img(imgPath,imgName)
 
 if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
     imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
@@ -21,13 +13,10 @@ else
     error('Image folder not found, update image path in script');
 end
 
-imgFile1 = strcat(imgPath,'img_2017-12-14-100226_49.tmp');
+imgFile = strcat(imgPath,imgName);
 
-
-tic;
-% load in the images
-image_1 = load_image_tmp(imgFile1);
-
+% load in the image
+image_1 = load_image_tmp(imgFile);
 
 % plot the first image
 figure(1), clf, hold on, colormap gray
@@ -35,20 +24,10 @@ pcolor(image_1);
 shading interp;
 axis equal
 
-% plot a registration line
+% plot a registration line, position doesnt matter as long as tape position
+% is clearly readable
 plot([200 1000],[100 100],'r');
 
-% y = 151;
-% d = 72.5;
-% plot([800 1000],[y+d/2 y+d/2],'r')
-% plot([800 1000],[y-d/2 y-d/2],'r')
-% xlim([800 950])
-% ylim([y-100 y+100])
-
-% [1852 1752 1650 1552 1452 1351 1249 1150 1052 953  853 755   653  554
-% 453 352 251 151
-% [70.5 70.5  71   71  72.5  73.5 74  74.5 75.0 75.5 75.5 75.1 75.1 74.1
-% 74.1 73.5 73.5 72.5
 
 
 

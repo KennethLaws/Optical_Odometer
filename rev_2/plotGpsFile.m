@@ -2,7 +2,15 @@
 % Read and parse the GPS/IMU file
 clear all;
 
-gpsFile = '/Volumes/M2Ext/Test_Drive_1214/GPS_IMU/cartest12_14_10_11_58.csv';
+if exist('/Volumes/M2Ext/Test_Drive_1214/GPS_IMU/')
+    imgPath = '/Volumes/M2Ext/Test_Drive_1214/GPS_IMU/';
+elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/GPS_IMU/')
+    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/GPS_IMU/';
+else
+    error('Image folder not found, update image path in script');
+end
+
+gpsFile = strcat(imgPath,'cartest12_14_10_11_58.csv');
 
 [yaw, pos] = readGpsImu(gpsFile);
 
