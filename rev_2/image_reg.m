@@ -31,6 +31,11 @@ c = real(ifft2((Ga.*conj(Gb))./abs(Ga.*conj(Gb))));
 % xpeak and ypeak are the bottom left corner of the matched window
 
 max_c = max(abs(c(:)));
-[ypeak, xpeak] = find(c == max(c(:)));
+if max_c < inf
+    [ypeak, xpeak] = find(c == max(c(:)));
+else
+    ypeak = NaN;
+    xpeak = NaN;
+end
 
 return

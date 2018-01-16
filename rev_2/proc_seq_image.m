@@ -31,7 +31,7 @@ elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/')
 else
     error('Image folder not found, update image path in script');
 end
-foldSpec = '101358';
+foldSpec = '101410';
 folder = ['img_2017_12-14-',foldSpec, '/'];
 imgPath = strcat(imgPath,folder);
 step = 0;       % keep track of image step
@@ -47,13 +47,13 @@ while 1
     if done, break; end
     
     % debugging test
-%     if step < 115
+%     if step == 201
 %         continue
 %     end
     
     % load in the images
     [image_1, image_2] = load_images(fnames);
-  
+    
     % process image pair
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);

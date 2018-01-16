@@ -3,7 +3,7 @@
 function plot_seqImg_rslt(fname)
 
 if nargin == 0
-    fname = 'seq_image_rslt.mat';
+    fname = 'seq_image_rslt_101400.mat';
 end
 
 % rslt(step,:) = [step, deltPosPix, dy_inches, snr_db];
@@ -18,8 +18,18 @@ load(fname);
 total_Y = sum(rslt(:,4));
 fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
 
+timeStep = 10/1562;     % colelcted 1562 images per 10 sec
+vehSpd = rslt(:,4)/timeStep;
+
 figure(1), clf
 %plot(rslt(rng,1),rslt(rng,4))
-plot(rslt(:,1),rslt(:,4))
-ylabel('Distance per Frame Pair (m)');
+plot(rslt(:,1),vehSpd)
+ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')
+
+figure(2), clf
+plot(rslt(:,1),rslt(:,6))
+ylabel('SNR (dB)');
+xlabel('Image Number')
+
+

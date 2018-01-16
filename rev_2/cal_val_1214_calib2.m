@@ -4,7 +4,7 @@
 
 clear;
 
-doCal = 0;      % set this to do the calibration step
+doCal = 1;      % set this to do the calibration step
 
 % set image path
 if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
@@ -27,12 +27,12 @@ img_end = 141;
 rng = (img_start+1):(img_end+1);
 
 total_Y = sum(rslt(rng,4));
-fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
-fprintf('\n');
+% fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
+% fprintf('\n');
 
 figure(1), clf
-plot(rslt(rng,1),rslt(rng,4))
-ylabel('Distance per Frame Pair (m)');
+plot(rslt(rng,1),rslt(rng,2))
+ylabel('Distance per Frame Pair (pix)');
 xlabel('Image Number')
 title('12/14/17 Test Calibration')
 
@@ -55,6 +55,7 @@ pixy = sum(rslt(rng,2));
 
 if doCal
     % examine the start and end images to read the positions from the tape
+    fprintf('Calibration sequence\n');
     disp 'manually examine images to measure distance'
     fprintf('Estimate position for start image');
     disp(startImage)
@@ -66,10 +67,10 @@ if doCal
     
     total_Y = y2 - y1;
     
-    fprintf('Calibration sequence\n');
+    fprintf('Number of image pairs: %d\n',length(rng));
     fprintf('Total pixel transition, x = %d pix\n',-pixx);
     fprintf('Total pixel transition, y = %d pix\n',-pixy);
-    fprintf('Total distance travelled, x = %0.4f m\n',total_X);
+    %fprintf('Total distance travelled, x = %0.4f m\n',total_X);
     fprintf('Total distance travelled, y = %0.4f m\n\n',total_Y);
 end
 
@@ -87,7 +88,7 @@ endImage = 'img_2017-12-14-100245_141.tmp';
 
 % estimate the distance travelled by measure on tape in image
 disp 'manually examine images to measure distance'
-fprintf('Estimate position for start image');
+fprintf('Estimate position for start image ');
 disp(startImage)
 plot_sing_img(imgPath,startImage);
 y1 = input('enter registration line position for image in cm (60.88):');
