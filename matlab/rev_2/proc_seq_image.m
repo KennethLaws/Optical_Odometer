@@ -8,7 +8,7 @@
 % depend on the experiment parameters and this script is more general
 
 clear all;
-doplot = 0;
+doplot = 1;
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -31,7 +31,7 @@ elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/')
 else
     error('Image folder not found, update image path in script');
 end
-foldSpec = '101410';
+foldSpec = '101400';
 folder = ['img_2017_12-14-',foldSpec, '/'];
 imgPath = strcat(imgPath,folder);
 step = 0;       % keep track of image step
@@ -46,10 +46,10 @@ while 1
     [p,fnames, done] = get_file_names(imgPath);
     if done, break; end
     
-    % debugging test
-%     if step == 201
-%         continue
-%     end
+    %debugging test
+    if step < 193
+        continue
+    end
     
     % load in the images
     [image_1, image_2] = load_images(fnames);
@@ -59,7 +59,7 @@ while 1
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
 
     % compute shift
-    deltPosPix = [ypeak-y1,xpeak-x1];
+    deltPosPix = [ypeak-y1,xpeak-x1]
     
     % transfor to caibrated measure of translation (m)
     %deltY = compDY(y1,ypeak,calib);

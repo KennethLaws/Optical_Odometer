@@ -1,8 +1,9 @@
 % read in a list of folder names containing the image data files
 % select consecutive image files to return.  Set falg when done
 
-function [p, fnames, flag] = get_file_names(imgPath)
+function [p, fnames, flag] = get_file_names(imgPath,step)
 
+    
 persistent fileNum;
 persistent fileNames;
 persistent nFiles;
@@ -27,6 +28,11 @@ if isempty(fileNum)
     end
     % to handle multiple folders, more work needed here
 end
+
+if nargin > 1
+    fileNum = step;
+end
+
 
 if nFiles == fileNum
     flag = 1;

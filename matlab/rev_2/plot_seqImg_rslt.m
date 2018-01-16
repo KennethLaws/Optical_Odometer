@@ -22,12 +22,16 @@ timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 vehSpd = rslt(:,4)/timeStep;
 
 figure(1), clf
-%plot(rslt(rng,1),rslt(rng,4))
+plot(rslt(:,1),rslt(:,2))
+ylabel('Position Shift (pix)');
+xlabel('Image Number')
+
+figure(2), clf
 plot(rslt(:,1),vehSpd)
 ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')
 
-figure(2), clf
+figure(3), clf
 plot(rslt(:,1),rslt(:,6))
 ylabel('SNR (dB)');
 xlabel('Image Number')
