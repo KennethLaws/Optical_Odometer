@@ -9,7 +9,7 @@
 
 clear all;
 doplot = 1;
-foldSpec = '101400';
+foldSpec = '101410';
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -40,11 +40,12 @@ step = 0;       % keep track of image step
 calib = test_drive_1214_calib2;
 
 disp 'Check sequential images'
-step = input('Enter starting step number: ')
+step = input('Enter starting step number: ');
 
 
 while 1
 
+    fprintf('step = %d\n',step);
     % set the file names
     [p,fnames, done] = get_file_names(imgPath,step);
     if done, break; end
@@ -58,7 +59,7 @@ while 1
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
 
     % compute shift
-    deltPosPix = [ypeak-y1,xpeak-x1]
+    deltPosPix = [ypeak-y1,xpeak-x1];
     
     % transfor to caibrated measure of translation (m)
     %deltY = compDY(y1,ypeak,calib);
@@ -111,7 +112,7 @@ while 1
     fprintf('template size: %d x %d \n',w,h);
     fprintf('template lower left corner position: (%d, %d)\n', y1,x1);
     fprintf('processing matrix dimensions: (%d, %d)\n',yPix,xPix);
-    fprintf('retrieved position: (%d, %d)\n',xpeak,ypeak);
+    fprintf('retrieved position: (%d, %d)\n',ypeak,xpeak);
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
     fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltPosMeters);
     %fprintf('reading files took %0.3E sec\n',et1);
@@ -135,11 +136,11 @@ while 1
     s = input('Press any key to view next image pair, q to quit: ','s');
     if s == 'q'
         break;
+    else if ~isempty(strnum(s))
+        step = str2num(s);
+    else
+        step = step + 1;        
     end
-    
-    step = step + 1;
-
-        
 end
 
 

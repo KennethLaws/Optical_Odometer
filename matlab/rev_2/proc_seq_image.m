@@ -9,6 +9,7 @@
 
 clear all;
 doplot = 1;
+foldSpec = '101420';
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -31,7 +32,6 @@ elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/')
 else
     error('Image folder not found, update image path in script');
 end
-foldSpec = '101400';
 folder = ['img_2017_12-14-',foldSpec, '/'];
 imgPath = strcat(imgPath,folder);
 step = 0;       % keep track of image step

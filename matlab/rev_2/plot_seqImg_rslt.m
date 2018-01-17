@@ -21,17 +21,18 @@ fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
 timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 vehSpd = rslt(:,4)/timeStep;
 
-figure(1), clf
+figure(3), clf
 plot(rslt(:,1),rslt(:,2))
 ylabel('Position Shift (pix)');
 xlabel('Image Number')
 
-figure(2), clf
+figure(4), clf
 plot(rslt(:,1),vehSpd)
 ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')
+title(fname, 'Interpreter', 'none' ) 
 
-figure(3), clf
+figure(5), clf
 plot(rslt(:,1),rslt(:,6))
 ylabel('SNR (dB)');
 xlabel('Image Number')

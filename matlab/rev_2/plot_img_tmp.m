@@ -33,10 +33,12 @@ image_1 = load_image_tmp(imgFile1);
 figure(1), clf, hold on, colormap gray
 pcolor(image_1);
 shading interp;
-axis equal
 
 % plot a registration line
 plot([200 1000],[100 100],'r');
+
+xlim([0 1200]);
+axis equal
 
 % y = 151;
 % d = 72.5;
