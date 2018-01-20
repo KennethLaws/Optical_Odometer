@@ -22,7 +22,6 @@ h = 128;    % height of subframe
 xPix = 1200;    % matrix dimensions for image processing factor of 2^n
 yPix = 1920;
 x1 = (imageRes(2) - w)/2;
-%y1 = imageRes(1) - h;
 y1 = 100;
 
 if exist('/Volumes/M2Ext/Test_Drive_1214/')
@@ -57,9 +56,12 @@ while 1
     % process image pair
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
+    
+    % bad data rejection
+    [reject,fracSat,fracBlk] = data_reject(ypeak,xpeak,yPix,xPix,image_1,x1,y1,h,w); 
 
     % compute shift
-    deltPosPix = [ypeak-y1,xpeak-x1]
+    deltPosPix = [ypeak-y1,xpeak-x1];
     
     % transfor to caibrated measure of translation (m)
     %deltY = compDY(y1,ypeak,calib);
@@ -131,7 +133,7 @@ while 1
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step, deltPosPix, deltPosMeters, snr_db];
+    rslt(step,:) = [step,deltPosPix,deltPosMeters,snr_db,fracSat,fracBlk,reject];
 end
 
 rsltFile = ['seq_image_rslt_',foldSpec];

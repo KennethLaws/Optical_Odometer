@@ -9,7 +9,7 @@
 
 clear all;
 doplot = 1;
-foldSpec = '101410';
+foldSpec = '101400';
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -22,7 +22,6 @@ h = 128;    % height of subframe
 xPix = 1200;    % matrix dimensions for image processing factor of 2^n
 yPix = 1920;
 x1 = (imageRes(2) - w)/2;
-%y1 = imageRes(1) - h;
 y1 = 100;
 
 if exist('/Volumes/M2Ext/Test_Drive_1214/')
@@ -61,18 +60,26 @@ while 1
     % compute shift
     deltPosPix = [ypeak-y1,xpeak-x1];
     
-    % transfor to caibrated measure of translation (m)
+    % transfor to calibrated measure of translation (m)
     %deltY = compDY(y1,ypeak,calib);
     %deltY = deltY * 2.67/2.59;
     %deltX = compDY(x1,xpeak,calib);
     %deltX = deltX * 2.67/2.59;
     %deltPosPix = [72 35]  % debug test
     deltPosMeters = compShift(deltPosPix,calib);
-
+    
     % generate plots and outputs
     if doplot
+        
         % plot the first image
-        figure(1), clf, hold on, colormap gray
+        figure(1), clf; 
+        subplot(1,2,1), hold on, colormap gray
+        % parse off the file name to create image title
+        ttl = fnames{1};
+        idx = max(strfind(ttl,'img'));
+        ttl = ttl(idx:end);
+        title(ttl, 'Interpreter', 'none' );
+        
         pcolor(image_1);
         shading interp;
 
@@ -83,7 +90,14 @@ while 1
         plot([800, 1200],[y1 y1],'r');
 
         % plot the second image
-        figure(2), clf, hold on, colormap gray
+        subplot(1,2,2), hold on, colormap gray
+        
+        % parse off the file name to create image title
+        ttl = fnames{2};
+        idx = max(strfind(ttl,'img'));
+        ttl = ttl(idx:end);
+        title(ttl, 'Interpreter', 'none' );
+
         pcolor(image_2);
         shading interp;
 
@@ -92,12 +106,12 @@ while 1
         plot([800, 1200],[ypeak ypeak],'r');
 
         % plot the subframe
-        plotrect(xpeak,ypeak,w,h,2);
+        plotrect(xpeak,ypeak,w,h,1);
 
 
         %plot the original registration line
-        figure(2)
         plot([800, 1200],[y1 y1],'g--');
+        %plotrect(x1,y1,w,h,1);
         
         figure(3); clf; surf(abs(c)), shading interp;   
     end
@@ -133,10 +147,26 @@ while 1
 
     rslt(step,:) = [step, deltPosPix, deltPosMeters, snr_db];
     
+    template = image_1(y1:(y1+h-1),x1:x1+w-1);
+    target = image_2(ypeak:(ypeak+h-1),xpeak:xpeak+w-1);
+    
+    template = template(:);
+    target = target(:);
+    % select the template region for manual examination, do some checks
+    n = length(template(:));
+    fracSat = length(template(template>254))/n;
+    
+    % compute the difference between scaled target and template
+    normTrg = target - mean(target);
+    normTrg = normTrg/max(normTrg);
+    normTmplt = template - mean(template);
+    normTmplt = normTmplt/max(normTmplt);
+    normDiff = sum(abs(normTrg-normTmplt));
+  
     s = input('Press any key to view next image pair, q to quit: ','s');
     if s == 'q'
         break;
-    else if ~isempty(strnum(s))
+    elseif ~isempty(str2num(s))
         step = str2num(s);
     else
         step = step + 1;        
