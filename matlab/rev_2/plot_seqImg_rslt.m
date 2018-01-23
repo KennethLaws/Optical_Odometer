@@ -45,7 +45,7 @@ goodRslt(rslt(:,6) == 1,4) = NaN;
 
 
 % recalculate speed
-vehSpd = goodRslt(:,4)/timeStep;
+vehSpd = (goodRslt(:,4)/timeStep)';
 
 % fill gaps
 minGood = 5;    % minimum number of good points between gaps to do interpolationusing curve fit
@@ -53,19 +53,43 @@ goodFactor = 3;  % to do curve fitting, number of adjacent good data must be 3x 
 gapIdx = find(isnan(vehSpd));
 gapDif = diff(gapIdx);
 gapSet = find(gapDif >1);
+fitSpan = 150;
+fitRng = fitSpan/3;
+N = length(vehSpd)/fitSpan;
+N = floor(N);
 
-startGapIdx = 1;
-for n = 1: length(gapSet)
-    gapDifIdx = gapSet(n);
-    startGap = gapIdx(startGapIdx);
-    endGap = gapIdx(gapDifIdx);
-    gapSize = endGap-startGap;
-    if (startGap-minGood > 0) & (endGap+minGood <= length(vehSpd))
-        % can fill gap
-        span = (startGap-gapSize*3):(endGap+minGood);
-
+startSpan = 1;
+for nSpan = 1:N
+    endSpan = startSpan + fitSpan-1;
+    fitPnts = startSpan:endSpan;
+    fillPnts = startSpan:(startSpan+fitRng-1);
+    fitSpd = vehSpd(fitPnts);
+    gapPnts = find(isnan(vehSpd(fillPnts)));
+    if ~isempty(gapPnts)
+        x = fitPnts(~isnan(fitSpd));
+        y = fitSpd(~isnan(fitSpd));
+        p = polyfit(x,y,3);
+        y = polyval(p,x);
+        figure(10), clf, hold on;
+        plot(x,y);
+        plot(fitPnts,fitSpd);
     end
+    startSpan = max(fillPnts);
+    
 end
+
+% startGapIdx = 1;
+% for n = 1: length(gapSet)
+%     gapDifIdx = gapSet(n);
+%     startGap = gapIdx(startGapIdx); 
+%     endGap = gapIdx(gapDifIdx);
+%     gapSize = endGap-startGap;
+%     if (startGap-gapSize*3 > 0) & (endGap+gapSize*3 <= length(vehSpd))
+%         % can fill gap
+%         span = (startGap-gapSize*3):(endGap+gapSize*3);
+% 
+%     end
+% end
 
 figure(6), clf
 plot(goodRslt(:,1),vehSpd)
