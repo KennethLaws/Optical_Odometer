@@ -8,8 +8,8 @@
 % depend on the experiment parameters and this script is more general
 
 clear all;
-doplot = 1;
-foldSpec = '101420';
+doplot = 0;
+foldSpec = '101400';
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -46,7 +46,7 @@ while 1
     if done, break; end
     
     %debugging test
-    if step < 193
+    if step <= 0
         continue
     end
     
@@ -58,7 +58,7 @@ while 1
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
     
     % bad data rejection
-    [reject,fracSat,fracBlk] = data_reject(ypeak,xpeak,yPix,xPix,image_1,x1,y1,h,w); 
+    [reject,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w); 
 
     % compute shift
     deltPosPix = [ypeak-y1,xpeak-x1];
@@ -108,6 +108,7 @@ while 1
     %fprintf('Camera = %s\n',camera);
     %fprintf('installed lens = %s\n', lens);
     fprintf('*************************************************\n');
+    fprintf('step = %d\n',step);
     fprintf('file 1: %s\n',fnames{1});
     fprintf('file 2: %s\n',fnames{2});
     fprintf('image size: %d x %d\n',size(image_1));
@@ -133,8 +134,11 @@ while 1
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step,deltPosPix,deltPosMeters,snr_db,fracSat,fracBlk,reject];
+    rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH];
 end
+
+% fill gaps created by dta rejection
+
 
 rsltFile = ['seq_image_rslt_',foldSpec];
 if exist('.mat')
