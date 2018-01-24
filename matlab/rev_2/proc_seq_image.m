@@ -8,7 +8,7 @@
 % depend on the experiment parameters and this script is more general
 
 clear all;
-doplot = 0;
+doplot = 1;
 foldSpec = '101400';
 
 % specify camera lens and setup
