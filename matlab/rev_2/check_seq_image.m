@@ -9,7 +9,7 @@
 
 clear all;
 doplot = 1;
-foldSpec = '101400';
+foldSpec = '101410';
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';

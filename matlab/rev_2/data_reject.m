@@ -1,5 +1,5 @@
 
-function [reject,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w)
+function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w)
 % data rejection function
 % Uses inputs 
 % xPix, yPix area of input images to process 
@@ -16,7 +16,7 @@ function [reject,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH] = data_reject(ypea
     fracSat = 0;
     fracBlk = 0;
     normDiff = 0;
-    TOP = 0;
+    edgeLim = 0;
     BLK = 0;
     SAT = 0;
     MSMTCH = 0;
@@ -35,6 +35,9 @@ function [reject,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH] = data_reject(ypea
     satLim = .95;
     blk = 2;
     blkLim = .95;
+    TOP = 1;
+    EDGE = 2;
+    BOTTOM = 3;
     
     % set rejection codes
 %     TOP = 1;        % target at top
@@ -67,10 +70,18 @@ function [reject,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH] = data_reject(ypea
     % check for solution at or past edge of reference image
     if (ypeak + h) >= yPix
         reject = 1;
-        TOP = 1;
+        edgeLim = TOP;
         return;
-    else
-        TOP = 0;
+    elseif (xpeak <= 1) || ((xpeak+w-1) >= xPix)
+        reject = 1;
+        edgeLim = EDGE;
+        return;
+    elseif ypeak <= 1
+        reject = 1;
+        edgeLim = BOTTOM;
+        return;
+    else   
+        edgeLim = 0;
     end
     
 

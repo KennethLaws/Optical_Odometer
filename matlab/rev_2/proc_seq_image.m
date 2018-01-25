@@ -8,8 +8,8 @@
 % depend on the experiment parameters and this script is more general
 
 clear all;
-doplot = 1;
-foldSpec = '101400';
+doplot = 0;
+foldSpec = '101430';
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -46,9 +46,9 @@ while 1
     if done, break; end
     
     %debugging test
-    if step <= 0
-        continue
-    end
+%     if step == 985
+%         disp stop;
+%     end
     
     % load in the images
     [image_1, image_2] = load_images(fnames);
@@ -58,7 +58,7 @@ while 1
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
     
     % bad data rejection
-    [reject,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w); 
+    [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w); 
 
     % compute shift
     deltPosPix = [ypeak-y1,xpeak-x1];
@@ -134,7 +134,7 @@ while 1
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,TOP,BLK,SAT,MSMTCH];
+    rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH];
 end
 
 % fill gaps created by dta rejection
