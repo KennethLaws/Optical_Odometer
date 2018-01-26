@@ -13,7 +13,7 @@
 % newer version, compatible with my format, like bitmap but with no header
 % this version does not select the subframe region
 function [image_1, image_2] = load_images(fnames)
-    fid = fopen(fnames{1});
+    fid = fopen(fnames{1});   
     img = fread(fid);
     fclose(fid);
     image_1 = reshape(img,1920,1200);

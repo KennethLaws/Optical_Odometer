@@ -9,7 +9,9 @@
 
 clear all;
 doplot = 0;
-foldSpec = '101430';
+procDrive = 1;
+
+foldSpec = '101350A';        % not used for bulk 'procDrive' processing
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -24,20 +26,24 @@ yPix = 1920;
 x1 = (imageRes(2) - w)/2;
 y1 = 100;
 
-if exist('/Volumes/M2Ext/Test_Drive_1214/')
-    imgPath = '/Volumes/M2Ext/Test_Drive_1214/';
-elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/')
-    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/';
+if exist('/Volumes/M2Ext/Test_Drive_1214/Drive/')
+    imgPath = '/Volumes/M2Ext/Test_Drive_1214/Drive/';
+elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/Drive/')
+    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/test/';
 else
     error('Image folder not found, update image path in script');
 end
-folder = ['img_2017_12-14-',foldSpec, '/'];
-imgPath = strcat(imgPath,folder);
-step = 0;       % keep track of image step
+
+if ~procDrive   % procesing a single folder using 'folderSpec'
+    folder = ['img_2017_12-14-',foldSpec, '/'];
+    imgPath = strcat(imgPath,folder);
+end
 
 % get calibration data
 calib = test_drive_1214_calib2;
 
+% begin processing selected data set
+step = 0;       % keep track of image step
 while 1
     step = step + 1;
 
