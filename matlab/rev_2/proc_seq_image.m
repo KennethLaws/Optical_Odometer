@@ -9,9 +9,22 @@
 
 clear all;
 doplot = 0;
-procDrive = 1;
 
-foldSpec = '101350A';        % not used for bulk 'procDrive' processing
+% specify the path in the data folder, folder may contain only image files,
+% or only subfolders that contain only image files.  Subfolder names must
+% be consecutive so that they sort properly when reading files
+folderSpec = 'Drive/';  
+
+% specify the data folder
+if exist('/Volumes/M2Ext/Test_Drive_1214/')
+    imgPath = '/Volumes/M2Ext/Test_Drive_1214/';
+elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/')
+    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/';
+else
+    error('Image folder not found, update image path in script');
+end
+
+imgPath = strcat(imgPath,folderSpec);
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -26,18 +39,7 @@ yPix = 1920;
 x1 = (imageRes(2) - w)/2;
 y1 = 100;
 
-if exist('/Volumes/M2Ext/Test_Drive_1214/Drive/')
-    imgPath = '/Volumes/M2Ext/Test_Drive_1214/Drive/';
-elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/Drive/')
-    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/test/';
-else
-    error('Image folder not found, update image path in script');
-end
 
-if ~procDrive   % procesing a single folder using 'folderSpec'
-    folder = ['img_2017_12-14-',foldSpec, '/'];
-    imgPath = strcat(imgPath,folder);
-end
 
 % get calibration data
 calib = test_drive_1214_calib2;
@@ -49,6 +51,7 @@ while 1
 
     % set the file names
     [p,fnames, done] = get_file_names(imgPath);
+    done = 1
     if done, break; end
     
     %debugging test
@@ -146,7 +149,7 @@ end
 % fill gaps created by dta rejection
 
 
-rsltFile = ['seq_image_rslt_',foldSpec];
+rsltFile = ['seq_image_rslt_',folderSpec];
 if exist('.mat')
     s = input('result file exists, overwrite (y/n): ','s');
 else

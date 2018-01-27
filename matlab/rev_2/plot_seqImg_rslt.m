@@ -5,7 +5,7 @@ function plot_seqImg_rslt(fname)
 
 
 if nargin == 0
-    fname = 'seq_image_rslt_101400.mat';
+    fname = 'seq_image_rslt_Drive_1214.mat';
 end
 
 % rslt(step,:) = [step, deltPosPix, dy_inches, snr_db];
