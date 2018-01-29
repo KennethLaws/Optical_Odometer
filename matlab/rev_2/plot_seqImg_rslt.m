@@ -135,11 +135,20 @@ ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')
 title(fname, 'Interpreter', 'none' ) 
 
-figure(3), clf, hold on
+%rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH];
+
+figure(7), clf, hold on
 plot(rslt(:,1),rslt(:,11),'b.')
 plot(rslt(:,1),rslt(:,14),'g.')
 ylabel('reject codes');
 xlabel('Image Number')
+
+figure(7), clf, hold on
+plot(rslt(:,1),rslt(:,10),'b.')
+plot(rslt(rslt(:,6) == 1,1),rslt(rslt(:,6) == 1,10),'r.')
+ylabel('reject codes');
+xlabel('Image Number')
+title('Normalized Difference')
 
 
 

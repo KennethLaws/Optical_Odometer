@@ -32,10 +32,12 @@ imgPath = strcat(imgPath,folderSpec);
 
 % define a subframe (smaller than maximum)
 imageRes = [1920, 1200];
-w = 256;    % width of subframe
-h = 128;    % height of subframe
 xPix = 1200;    % matrix dimensions for image processing factor of 2^n
 yPix = 1920;
+
+%set location and size of template region
+w = 256;    % width of subframe
+h = 128;    % height of subframe
 x1 = (imageRes(2) - w)/2;
 y1 = 100;
 

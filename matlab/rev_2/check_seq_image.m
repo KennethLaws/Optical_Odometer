@@ -64,7 +64,12 @@ while 1
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
 
-        % bad data rejection
+     % estimate signal to noise
+    s = c(:);  % power spectrum
+    snr_db = 10*log10(max(s)/std(s));        % signal to noise of power spectrum
+
+        
+    % bad data rejection
     [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w); 
 
     % compute shift
@@ -140,8 +145,8 @@ while 1
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
     fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltPosMeters);
     fprintf('retrieved speed in y: %0.3f m/s\n',deltPosMeters(1)*156.2);
-    fprintf('data rejection: r:%d FS:%0.2f FB:%0.2f ND:%0.2f E:%d B:%d S:%d M:%d\n', ...
-        reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
+    fprintf('data rejection: r:%d snr:%0.1f FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...
+        reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
