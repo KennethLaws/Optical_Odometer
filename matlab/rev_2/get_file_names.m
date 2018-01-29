@@ -1,7 +1,7 @@
 % read in a list of folder names containing the image data files
 % select consecutive image files to return.  Set flag when done
 
-function [imgFold, fnames, doneflag] = get_file_names(imgPath)
+function [imgFold, fnames, doneflag] = get_file_names(imgPath,step)
 
     
 persistent fileNum;
@@ -14,8 +14,13 @@ persistent subFold;
 persistent nSubfolders;
 
 if nargin >1
-    fileNum = step;
+    fileNum = mod(step,1562);
+    foldNum = floor(step/1562)+3;
+else
+    fileNum = 1;
+    foldNum = 3;
 end
+
 
 % if folder names is not populated, get a list of folders to process
 if isempty(foldNames)
@@ -27,7 +32,6 @@ if isempty(foldNames)
     % use this to get all folder names
     foldNames = {flist(dirset).name};
     nFolders = size(foldNames,2);
-    foldNum = 3;    % skip the first two folders ('.' and '..')
 end
 
 if nFolders == 2    %
@@ -60,7 +64,7 @@ else
     subFold = foldNames{foldNum};
     imgFold = [imgPath subFold '/'];
     % first time through, get file listing
-    if isempty(fileNum)            
+    if isempty(fileNames)            
         flist = dir(imgFold);
         dirset = {flist.isdir};
         % convert this to an array of logicals
@@ -71,7 +75,6 @@ else
         if nSubfolders > 2
             error('Selected image path has subfolders, select new image path'); 
         end
-        fileNum = 1;
         fileNames = {flist(~dirset).name};
         nFiles = length(fileNames);
     end
@@ -103,7 +106,6 @@ else
             f2 = strcat(imgFold, fileNames(fileNum));
             fnames = [f1 f2];
             doneflag = 0;
-            fileNum = 1;
         else
             % no more folders to process - done
             doneflag = 1;
@@ -117,28 +119,6 @@ else
         doneflag = 0;
         fileNum = fileNum + 1;
     end
-%     else
-%         doneflag = 1;
-%         f1 = [];
-%         f2 = [];
-%         imgFold = [];
-%         fnames = [];
-%     end    
-    
-%     if nFiles == fileNum
-%         flag = 1;
-%         f1 = [];
-%         f2 = [];
-%         imgFold = [];
-%         fnames = [];
-%     else
-%         imgFold = imgPath;
-%         f1 = strcat(p, fileNames(fileNum));
-%         f2 = strcat(p, fileNames(fileNum + 1));
-%         fnames = [f1 f2];
-%         flag = 0;
-%         fileNum = fileNum + 1;
-%     end
     
 end
     
