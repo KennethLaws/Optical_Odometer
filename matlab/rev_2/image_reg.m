@@ -26,7 +26,7 @@ Gb = fft2(template,yPix,xPix);
 c = real(ifft2((Ga.*conj(Gb))./abs(Ga.*conj(Gb))));
 
 % zero out edge regions to compensate for edge effects that cause
-% anomolusly high
+% anomolusly high error retrievals
 c((yPix-h-1):end,:) = 0;
 c(1:2,:) = 0;
 c(:,1:2) = 0;

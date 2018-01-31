@@ -53,7 +53,6 @@ while 1
 
     % set the file names
     [p,fnames, done] = get_file_names(imgPath);
-    done = 1
     if done, break; end
     
     %debugging test
@@ -139,13 +138,20 @@ while 1
 
     % estimate signal to noise
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
-    snr_db = 10*log10(max(s)/std(s));        % signal to noise of power spectrum
+    solutionPk = max(s);
+    snr_db = 10*log10(solutionPk/std(s));        % signal to noise of power spectrum
+    
+    % compute value of nearest ambiguity
+    s(s==max(s)) = 0;
+    [ypeakAmbg, xpeakAmbg] = find(c == max(s));
+    deltPosAmbg = [ypeak-ypeakAmbg,xpeak-xpeakAmbg];
+    snrAmbg = 10*log10(solutionPk/max(s));
 
     fprintf('Power spectrum statistics: std=%0.1E peak=%0.1E snr=%0.1f dB\n', ...
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH];
+    rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,snrAmbg];
 end
 
 % fill gaps created by dta rejection

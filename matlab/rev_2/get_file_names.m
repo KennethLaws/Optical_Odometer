@@ -13,9 +13,12 @@ persistent foldNum;
 persistent subFold;
 persistent nSubfolders;
 
+
 if nargin >1
-    fileNum = mod(step,1562);
-    foldNum = floor(step/1562)+3;
+    filesPerFolder = 1562;
+    fileNum = mod(step,filesPerFolder);
+    if fileNum == 0, fileNum = filesPerFolder; end
+    foldNum = ceil(step/filesPerFolder)+2;
 else
     fileNum = 1;
     foldNum = 3;

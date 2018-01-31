@@ -88,7 +88,7 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(
     % check for a poor match between template and target
     target = image_2(ypeak:(ypeak+h-1),xpeak:xpeak+w-1);
     target = target(:);
-    missMatchLim = 10000;
+    missMatchLim = 100000;
     normTrg = target - mean(target);
     normTrg = normTrg/max(normTrg);
     normTmplt = template - mean(template);
