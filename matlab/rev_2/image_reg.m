@@ -40,6 +40,9 @@ c(:,(xPix-w-1):end) = 0;
 max_c = max(abs(c(:)));
 if max_c < inf
     [ypeak, xpeak] = find(c == max(c(:)));
+    % avoid multiple identicle peak values
+    xpeak = xpeak(1);
+    ypeak = ypeak(1);
 else
     ypeak = NaN;
     xpeak = NaN;

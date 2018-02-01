@@ -19,9 +19,6 @@ if nargin >1
     fileNum = mod(step,filesPerFolder);
     if fileNum == 0, fileNum = filesPerFolder; end
     foldNum = ceil(step/filesPerFolder)+2;
-else
-    fileNum = 1;
-    foldNum = 3;
 end
 
 
@@ -35,6 +32,7 @@ if isempty(foldNames)
     % use this to get all folder names
     foldNames = {flist(dirset).name};
     nFolders = size(foldNames,2);
+    foldNum = 3;
 end
 
 if nFolders == 2    %
@@ -80,6 +78,7 @@ else
         end
         fileNames = {flist(~dirset).name};
         nFiles = length(fileNames);
+        fileNum = 1;
     end
 
     % check for last file in subfolder

@@ -139,11 +139,13 @@ while 1
     % estimate signal to noise
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
     solutionPk = max(s);
-    snr_db = 10*log10(solutionPk/std(s));        % signal to noise of power spectrum
+    snr_db = 10*log10(solutionPk/std(s));    % signal to noise of power spectrum
     
     % compute value of nearest ambiguity
     s(s==max(s)) = 0;
     [ypeakAmbg, xpeakAmbg] = find(c == max(s));
+    ypeakAmbg = ypeakAmbg(1);
+    xpeakAmbg = xpeakAmbg(1);
     deltPosAmbg = [ypeak-ypeakAmbg,xpeak-xpeakAmbg];
     snrAmbg = 10*log10(solutionPk/max(s));
 

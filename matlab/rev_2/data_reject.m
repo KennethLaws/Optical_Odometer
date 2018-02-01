@@ -68,21 +68,22 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(
     
         
     % check for solution at or past edge of reference image
-    if (ypeak + h) >= yPix
-        reject = 1;
-        edgeLim = TOP;
-        return;
-    elseif (xpeak <= 1) || ((xpeak+w-1) >= xPix)
-        reject = 1;
-        edgeLim = EDGE;
-        return;
-    elseif ypeak <= 1
-        reject = 1;
-        edgeLim = BOTTOM;
-        return;
-    else   
-        edgeLim = 0;
-    end
+%     if (ypeak + h) >= yPix
+%         reject = 1;
+%         edgeLim = TOP;
+%         return;
+%     elseif (xpeak <= 1) || ((xpeak+w-1) >= xPix)
+%         reject = 1;
+%         edgeLim = EDGE;
+%         return;
+%     elseif ypeak <= 1
+%         reject = 1;
+%         edgeLim = BOTTOM;
+%         return;
+%     else   
+%         edgeLim = 0;
+%     end
+    edgeLim = 0;
     
 
     % check for a poor match between template and target
