@@ -25,7 +25,7 @@ fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
 
 timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 vehSpd = (rslt(:,4)/timeStep)';
-imgNum = rslt(:,1)';
+imgNum = rslt(:,1)' - 1;
 dataGaps = imgNum(rslt(:,6) == 1);
 
 figure(4), clf

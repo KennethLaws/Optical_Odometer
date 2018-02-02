@@ -157,7 +157,16 @@ while 1
 
     % estimate signal to noise
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
-    snr_db = 10*log10(max(s)/std(s));        % signal to noise of power spectrum
+    solutionPk = max(s);
+    snr_db = 10*log10(solutionPk/std(s));    % signal to noise of power spectrum
+
+    % compute value of nearest ambiguity
+    s(s==max(s)) = 0;
+    [ypeakAmbg, xpeakAmbg] = find(c == max(s));
+    ypeakAmbg = ypeakAmbg(1);
+    xpeakAmbg = xpeakAmbg(1);
+    deltPosAmbg = [ypeak-ypeakAmbg,xpeak-xpeakAmbg];
+    snrAmbg = 10*log10(solutionPk/max(s));
 
     fprintf('Power spectrum statistics: std=%0.1E peak=%0.1E snr=%0.1f dB\n', ...
         std(s), max(s), snr_db);
@@ -180,6 +189,9 @@ while 1
     normTmplt = template - mean(template);
     normTmplt = normTmplt/max(normTmplt);
     normDiff = sum(abs(normTrg-normTmplt));
+    
+    
+
   
     s = input('Press any key to view next image pair, q to quit: ','s');
     if s == 'q'

@@ -19,6 +19,7 @@ if nargin >1
     fileNum = mod(step,filesPerFolder);
     if fileNum == 0, fileNum = filesPerFolder; end
     foldNum = ceil(step/filesPerFolder)+2;
+    fileNames = [];
 end
 
 
@@ -32,7 +33,7 @@ if isempty(foldNames)
     % use this to get all folder names
     foldNames = {flist(dirset).name};
     nFolders = size(foldNames,2);
-    foldNum = 3;
+    if isempty(foldNum) foldNum = 3; end
 end
 
 if nFolders == 2    %
@@ -51,7 +52,7 @@ if nFolders == 2    %
         imgFold = [];
         fnames = [];
     else
-           % set file name for next two images to process
+        % set file name for next two images to process
         imgFold = [imgPath subFold '/'];
         f1 = strcat(imgFold, fileNames(fileNum));
         f2 = strcat(imgFold, fileNames(fileNum + 1));
@@ -78,7 +79,7 @@ else
         end
         fileNames = {flist(~dirset).name};
         nFiles = length(fileNames);
-        fileNum = 1;
+        if isempty(fileNum) fileNum = 1; end
     end
 
     % check for last file in subfolder
