@@ -46,7 +46,19 @@ vehSpd(rslt(:,6) == 1) = NaN;
 
 % either load filtered data or filter the raw data to reject bad points ad
 % fill with interpolated data points
-if ~exist(filterName)
+if exist(filterName)
+    s = input('Use existing filtered data file? (Y/n)','s');
+    if s == 'n'
+        disp 'computing gap filling filter data' 
+        compFilt = 1;
+    else
+        disp 'using existing gap filling filter data'
+        compFilt = 0;
+    end
+end
+
+if compFilt == 1
+
     % fill gaps
     % sweep through data range fitting data where there are gaps avoiding
     % extrapolation
@@ -78,6 +90,7 @@ if ~exist(filterName)
     %     plot(x,y,'k');
     %     plot(gaps,vehSpd(gaps),'r*');
     end
+
 
     % fill gaps for set of sections in middle of data where we can interpolate 
     startSpan = 1;
@@ -130,6 +143,7 @@ figure(6), clf, hold on
 plot(imgNum,vehSpd,'b-')
 plot(imgNum,vehSpd,'b.')
 idx = find(rslt(:,6) == 1);
+% indicate data with reject codes
 plot(imgNum(idx),vehSpd(idx),'r.');
 ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')

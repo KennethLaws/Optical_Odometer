@@ -64,13 +64,10 @@ while 1
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
 
-     % estimate signal to noise
-    s = c(:);  % power spectrum
-    snr_db = 10*log10(max(s)/std(s));        % signal to noise of power spectrum
-
         
     % bad data rejection
     [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w); 
+
 
     % compute shift
     deltPosPix = [ypeak-y1,xpeak-x1];
@@ -130,7 +127,7 @@ while 1
         
         figure(3); clf; surf(abs(c)), shading interp;   
     end
-    
+
     % print results
     %fprintf('Camera = %s\n',camera);
     %fprintf('installed lens = %s\n', lens);
@@ -145,8 +142,10 @@ while 1
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
     fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltPosMeters);
     fprintf('retrieved speed in y: %0.3f m/s\n',deltPosMeters(1)*156.2);
-    fprintf('data rejection: r:%d snr:%0.1f FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...
-        reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
+%     fprintf('data rejection: r:%d snr:%0.1f FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...
+%         reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
+    fprintf('data rejection: r:%d FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...
+        reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
@@ -155,6 +154,7 @@ while 1
     %    pause
     %end
 
+    
     % estimate signal to noise
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
     solutionPk = max(s);
@@ -172,24 +172,24 @@ while 1
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step, deltPosPix, deltPosMeters, snr_db];
-    
-    template = image_1(y1:(y1+h-1),x1:x1+w-1);
-    target = image_2(ypeak:(ypeak+h-1),xpeak:xpeak+w-1);
-    
-    template = template(:);
-    target = target(:);
-    % select the template region for manual examination, do some checks
-    n = length(template(:));
-    fracSat = length(template(template>254))/n;
-    
-    % compute the difference between scaled target and template
-    normTrg = target - mean(target);
-    normTrg = normTrg/max(normTrg);
-    normTmplt = template - mean(template);
-    normTmplt = normTmplt/max(normTmplt);
-    normDiff = sum(abs(normTrg-normTmplt));
-    
+%     rslt(step,:) = [step, deltPosPix, deltPosMeters, snr_db];
+%     
+%     template = image_1(y1:(y1+h-1),x1:x1+w-1);
+%     target = image_2(ypeak:(ypeak+h-1),xpeak:xpeak+w-1);
+%     
+%     template = template(:);
+%     target = target(:);
+%     % select the template region for manual examination, do some checks
+%     n = length(template(:));
+%     fracSat = length(template(template>254))/n;
+%     
+%     % compute the difference between scaled target and template
+%     normTrg = target - mean(target);
+%     normTrg = normTrg/max(normTrg);
+%     normTmplt = template - mean(template);
+%     normTmplt = normTmplt/max(normTmplt);
+%     normDiff = sum(abs(normTrg-normTmplt));
+%     
     
 
   
