@@ -59,6 +59,14 @@ end
 
 if compFilt == 1
 
+    % add a new bad data filter to test
+    
+    % find data with low snr over ambiguities
+    idx = find(   (rslt(:,15) > 40 | rslt(:,16) > 40) & rslt(:,17) < .5        );
+    vehSpd(idx) = NaN;
+    rslt(idx,6) = 1;
+
+    
     % fill gaps
     % sweep through data range fitting data where there are gaps avoiding
     % extrapolation
@@ -143,13 +151,19 @@ figure(6), clf, hold on
 plot(imgNum,vehSpd,'b-')
 plot(imgNum,vehSpd,'b.')
 idx = find(rslt(:,6) == 1);
+
 % indicate data with reject codes
 plot(imgNum(idx),vehSpd(idx),'r.');
+
+% indicate data with low snr over ambiguities
+% idx = find(   (rslt(:,15) > 40 | rslt(:,16) > 40) & rslt(:,17) < .5        );
+% plot(imgNum(idx),vehSpd(idx),'g.')
+
 ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')
 title(fname, 'Interpreter', 'none' ) 
 
-%rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH];
+    %rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,snrAmbg];
 
 figure(7), clf, hold on
 plot(rslt(:,1),rslt(:,11),'b.')
