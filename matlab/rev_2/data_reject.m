@@ -1,5 +1,5 @@
 
-function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w)
+function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,rat] = data_reject(c,ypeak,xpeak, max_c,yPix,xPix,image_1,image_2,x1,y1,h,w)
 % data rejection function
 % Uses inputs 
 % xPix, yPix area of input images to process 
@@ -20,6 +20,8 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(
     BLK = 0;
     SAT = 0;
     MSMTCH = 0;
+    rat = NaN;
+    deltPosAmbg = [NaN, NaN];
 
     if isnan(ypeak) 
         reject = 1;
@@ -32,7 +34,7 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(
 
     % set limits
     sat = 254;
-    satLim = .95;
+    satLim = .80;
     blk = 2;
     blkLim = .95;
     TOP = 1;
@@ -85,6 +87,33 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(
 %     end
     edgeLim = 0;
     
+    % process ambiguity snr rejection
+    minAmbgRat = 1.5;   % minimum limit ratio over next ambiguity
+    if max_c == 1       % since c is normalized, if max != 1 there was no peak
+
+        % clear the region around the solution peak
+        [ypeak, xpeak] = find(c == max(c(:)));
+        ypeak = ypeak(1);
+        xpeak = xpeak(1);
+        c(ypeak-2:ypeak+2,xpeak-2:xpeak+2) = 0;
+
+    %     figure(10)
+    %     pcolor(c(ypeak-20:ypeak+20,xpeak-20:xpeak+20))
+
+        %find the highest ambiguity peak
+        s = c(:);    
+        [ypeakAmbg, xpeakAmbg] = find(c == max(c(:)));
+        ypeakAmbg = ypeakAmbg(1);
+        xpeakAmbg = xpeakAmbg(1);
+
+        deltPosAmbg = [ypeak-ypeakAmbg,xpeak-xpeakAmbg];
+        rat = max_c/max(s);
+
+        if rat < minAmbgRat, reject = 1; end
+    else
+        rat = NaN;
+        deltPosAmbg = [NaN, NaN];
+    end
 
     % check for a poor match between template and target
     target = image_2(ypeak:(ypeak+h-1),xpeak:xpeak+w-1);

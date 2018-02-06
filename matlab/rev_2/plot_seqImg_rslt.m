@@ -5,11 +5,11 @@ function plot_seqImg_rslt(fname)
 
 
 if nargin == 0
-    fname = 'seq_image_rslt_Drive_1214.mat';
+    fname = 'seq_image_rslt_05-Feb-2018.mat';
 end
 
 % set name to save or read filtered data set
-filterName = ['filter_',fname];
+gapFillName = ['gapFill_',fname];
 
 % load in the raw sequential image processed data
 load(fname);
@@ -19,13 +19,12 @@ load(fname);
 % img_end = 141;
 % rng = (img_start+1):(img_end+1);
 
-%total_Y = sum(rslt(rng,4));
-total_Y = sum(rslt(:,4));
-fprintf('Total distance travelled, y = %0.4f m\n',total_Y);
-
 timeStep = 10/1562;     % colelcted 1562 images per 10 sec
-vehSpd = (rslt(:,4)/timeStep)';
+vehDy = rslt(:,4)';
+vehSpd = vehDy/timeStep;
 imgNum = rslt(:,1)' - 1;
+
+
 dataGaps = imgNum(rslt(:,6) == 1);
 
 figure(4), clf
@@ -42,11 +41,11 @@ xlabel('Image Number')
 % apply bad data rejection
 rslt(rslt(:,6) == 1,4) = NaN;
 vehSpd(rslt(:,6) == 1) = NaN;
-
+vehDy(rslt(:,6) == 1) = NaN;
 
 % either load filtered data or filter the raw data to reject bad points ad
 % fill with interpolated data points
-if exist(filterName)
+if exist(gapFillName)
     s = input('Use existing filtered data file? (Y/n)','s');
     if s == 'n'
         disp 'computing gap filling filter data' 
@@ -55,16 +54,18 @@ if exist(filterName)
         disp 'using existing gap filling filter data'
         compFilt = 0;
     end
+else
+    compFilt = 1;
 end
 
 if compFilt == 1
 
     % add a new bad data filter to test
     
-    % find data with low snr over ambiguities
-    idx = find(   (rslt(:,15) > 40 | rslt(:,16) > 40) & rslt(:,17) < .5        );
-    vehSpd(idx) = NaN;
-    rslt(idx,6) = 1;
+%     % find data with low snr over ambiguities
+%     idx = find(   (rslt(:,15) > 40 | rslt(:,16) > 40) & rslt(:,17) < .5        );
+%     vehSpd(idx) = NaN;
+%     rslt(idx,6) = 1;
 
     
     % fill gaps
@@ -142,10 +143,16 @@ if compFilt == 1
     %     plot(x,y,'k');
     %     plot(gaps,vehSpd(gaps),'r*');
     end
-    save(filterName,'vehSpd');
+    
+    vehDy(rslt(:,6) == 1) = vehSpd(rslt(:,6) == 1)*timeStep;
+    save(gapFillName,'vehSpd', 'vehDy');
 end
 
-load(filterName,'vehSpd');
+load(gapFillName,'vehSpd', 'vehDy');
+
+%total_Y = sum(rslt(rng,4));
+total_Y = sum(vehDy);
+fprintf('Total distance travelled, y = %0.2f m\n',total_Y);
 
 figure(6), clf, hold on
 plot(imgNum,vehSpd,'b-')
@@ -154,6 +161,11 @@ idx = find(rslt(:,6) == 1);
 
 % indicate data with reject codes
 plot(imgNum(idx),vehSpd(idx),'r.');
+
+% compute fraction of rejected data points
+numReject = length(idx);
+fracReject = numReject/length(vehSpd)*100;
+fprintf('fraction of data rejected = %0.2f\n',fracReject);
 
 % indicate data with low snr over ambiguities
 % idx = find(   (rslt(:,15) > 40 | rslt(:,16) > 40) & rslt(:,17) < .5        );
@@ -165,18 +177,18 @@ title(fname, 'Interpreter', 'none' )
 
     %rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,snrAmbg];
 
-figure(7), clf, hold on
-plot(rslt(:,1),rslt(:,11),'b.')
-plot(rslt(:,1),rslt(:,14),'g.')
-ylabel('reject codes');
-xlabel('Image Number')
+% figure(7), clf, hold on
+% plot(rslt(:,1),rslt(:,11),'b.')
+% plot(rslt(:,1),rslt(:,14),'g.')
+% ylabel('reject codes');
+% xlabel('Image Number')
 
-figure(7), clf, hold on
-plot(rslt(:,1),rslt(:,10),'b.')
-plot(rslt(rslt(:,6) == 1,1),rslt(rslt(:,6) == 1,10),'r.')
-ylabel('reject codes');
-xlabel('Image Number')
-title('Normalized Difference')
+% figure(7), clf, hold on
+% plot(rslt(:,1),rslt(:,10),'b.')
+% plot(rslt(rslt(:,6) == 1,1),rslt(rslt(:,6) == 1,10),'r.')
+% ylabel('reject codes');
+% xlabel('Image Number')
+% title('Normalized Difference')
 
 
 

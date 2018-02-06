@@ -66,7 +66,7 @@ while 1
 
         
     % bad data rejection
-    [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w); 
+    [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,ambgRatio] = data_reject(c,ypeak,xpeak, max_c,yPix,xPix,image_1,image_2,x1,y1,h,w); 
 
 
     % compute shift
@@ -146,6 +146,7 @@ while 1
 %         reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
     fprintf('data rejection: r:%d FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...
         reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
+    fprintf('snr over ambiguity = %0.2f\n',ambgRatio);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
@@ -159,14 +160,6 @@ while 1
     s = reshape(c,[size(c,1)*size(c,2),1]);  % power spectrum
     solutionPk = max(s);
     snr_db = 10*log10(solutionPk/std(s));    % signal to noise of power spectrum
-
-    % compute value of nearest ambiguity
-    s(s==max(s)) = 0;
-    [ypeakAmbg, xpeakAmbg] = find(c == max(s));
-    ypeakAmbg = ypeakAmbg(1);
-    xpeakAmbg = xpeakAmbg(1);
-    deltPosAmbg = [ypeak-ypeakAmbg,xpeak-xpeakAmbg];
-    snrAmbg = 10*log10(solutionPk/max(s));
 
     fprintf('Power spectrum statistics: std=%0.1E peak=%0.1E snr=%0.1f dB\n', ...
         std(s), max(s), snr_db);

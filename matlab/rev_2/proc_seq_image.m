@@ -56,9 +56,9 @@ while 1
     if done, break; end
     
     %debugging test
-%     if step == 985
-%         disp stop;
-%     end
+    if step == 291
+        disp stop;
+    end
     
     % load in the images
     [image_1, image_2] = load_images(fnames);
@@ -68,7 +68,7 @@ while 1
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
     
     % bad data rejection
-    [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH] = data_reject(ypeak,xpeak,yPix,xPix,image_1,image_2,x1,y1,h,w); 
+    [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,ambgRatio] = data_reject(c,ypeak,xpeak, max_c,yPix,xPix,image_1,image_2,x1,y1,h,w); 
 
     % compute shift
     deltPosPix = [ypeak-y1,xpeak-x1];
@@ -141,26 +141,18 @@ while 1
     solutionPk = max(s);
     snr_db = 10*log10(solutionPk/std(s));    % signal to noise of power spectrum
     
-    % compute value of nearest ambiguity
-    s(s==max(s)) = 0;
-    [ypeakAmbg, xpeakAmbg] = find(c == max(s));
-    ypeakAmbg = ypeakAmbg(1);
-    xpeakAmbg = xpeakAmbg(1);
-    deltPosAmbg = [ypeak-ypeakAmbg,xpeak-xpeakAmbg];
-    snrAmbg = 10*log10(solutionPk/max(s));
-
     fprintf('Power spectrum statistics: std=%0.1E peak=%0.1E snr=%0.1f dB\n', ...
         std(s), max(s), snr_db);
     fprintf('\n');
 
-    rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,snrAmbg];
+    rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,ambgRatio];
 end
 
-% fill gaps created by dta rejection
+% fill gaps created by data rejection
 
 
-rsltFile = ['seq_image_rslt_',folderSpec];
-if exist('.mat')
+rsltFile = ['seq_image_rslt_',date];
+if exist([rsltFile '.mat'])
     s = input('result file exists, overwrite (y/n): ','s');
 else
     s = 'y';
