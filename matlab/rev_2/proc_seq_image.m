@@ -6,6 +6,7 @@
 % adds printout of setup parameters
 % removes use of camera height and resolution calculation (pix/m) these
 % depend on the experiment parameters and this script is more general
+% includes outlier rejection and gap filling
 
 clear all;
 doplot = 0;
