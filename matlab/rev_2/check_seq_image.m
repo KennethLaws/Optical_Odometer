@@ -146,7 +146,7 @@ while 1
 %         reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
     fprintf('data rejection: r:%d FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...
         reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
-    fprintf('snr over ambiguity = %0.2f\n',ambgRatio);
+    fprintf('ratio over ambiguity = %0.2f\n',ambgRatio);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
