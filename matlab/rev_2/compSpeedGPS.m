@@ -30,10 +30,17 @@ gpsFile = strcat(imgPath,'cartest12_14_10_11_58.csv');
 
 [yaw, pos] = readGpsImu(gpsFile);
 
+% there are problems with this data, remove points that are between gps
+% samples
+dpt = diff(pos(:,1));
+idx = find(dpt > 0.3);
+pos = pos(idx,:);
+yaw = yaw(idx,:);
+
 % convert change in x and y and t with yaw to velocity
 
 % select a start point
-sp = 166;
+sp = 110;
 t0 = pos(sp,1);
 x0 = pos(sp,2);
 y0 = pos(sp,3);
@@ -50,13 +57,14 @@ dx = diff(pos(:,2));
 dy = diff(pos(:,3));
 dpt = diff(pos(:,1));
 
+
 vx = dx./dpt;
 vy = dy./dpt;
 V = sqrt(vx.^2 +vy.^2);
 Tv = pos(2:end,1) + dpt;
 
 % try to sync up the results by shifting the image time variable
-tshift = -27;
+tshift = -85;
 
 % % plot position data
 % figure(1), clf, hold on
