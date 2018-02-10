@@ -149,11 +149,11 @@ plot(gpsPos(:,2),gpsPos(:,3),'g.')
 dx = diff(gpsPos(:,2));
 dy = diff(gpsPos(:,3));
 vehGpsTrnslt = sqrt(dx.^2 + dy.^2);  
-%deltGpsTime = diff(gpsPos(:,1));  % time between points
+% % deltGpsTime = diff(gpsPos(:,1));  % time between points
 
-vx = dx./deltGpsTime;
-vy = dy./deltGpsTime;
-V = sqrt(vx.^2 +vy.^2);
+% vx = dx./deltGpsTime;
+% vy = dy./deltGpsTime;
+% V = sqrt(vx.^2 +vy.^2);
 gpsTime = gpsPos(:,1);
 
 % compute accumulated distance travelled
@@ -171,7 +171,7 @@ GpsTrnslt = sqrt(dx^2 + dy^2);
 % compute accumulated distance travelled by image processing
 idx_img = find(imgTime > t1 & imgTime < t2);
 imgDy = vehDy(idx_img);
-imgTime = imgTime(idx_img);
+imgTimeSeg = imgTime(idx_img);
 
 totalDy = zeros(size(imgDy));
 for j = 2:length(imgDy)
@@ -182,7 +182,7 @@ imgTrnslt = totalDy(end);
 
 % plot both image and gps speed data
 figure(5), clf, hold on
-plot(imgTime,totalDy,'b-')
+plot(imgTimeSeg,totalDy,'b-')
 plot(gpsTime,totalGpsTrnslt,'g')
 ylabel('Distance Traveled (m)');
 xlabel('Time After Start (sec)')
@@ -193,5 +193,52 @@ fprintf('by gps accumulated difference, D = %0.3f\n',totalGpsTrnslt(end));
 fprintf('by gps difference between start and end points, D = %0.3f\n',GpsTrnslt);
 fprintf('by image accumulated difference, D = %0.3f\n',totalDy(end));
 
+% repeat the comparison for the second pass over the same roadway
+figure(3)
+% overplot a straight segment of the route
+t1 = 308.079;
+t2 = 331.08;
+idx_gps = find(pos(:,1) > t1 & pos(:,1) < t2);
+gpsPos = pos(idx_gps,:);
+plot(gpsPos(:,2),gpsPos(:,3),'c*')
 
+dx = diff(gpsPos(:,2));
+dy = diff(gpsPos(:,3));
+vehGpsTrnslt = sqrt(dx.^2 + dy.^2);  
+gpsTime = gpsPos(:,1);
 
+% compute accumulated distance travelled
+totalGpsTrnslt = zeros(size(gpsTime));
+for j = 2:length(gpsTime)
+    totalGpsTrnslt(j) = totalGpsTrnslt(j-1) + vehGpsTrnslt(j-1);
+end
+
+% compute total distance by GPS start and end points
+dx = gpsPos(end,2) - gpsPos(1,2);
+dy = gpsPos(end,3) - gpsPos(1,3);
+GpsTrnslt = sqrt(dx^2 + dy^2);
+
+% compute accumulated distance travelled by image processing
+idx_img = find(imgTime > t1 & imgTime < t2);
+imgDy = vehDy(idx_img);
+imgTimeSeg = imgTime(idx_img);
+
+totalDy = zeros(size(imgDy));
+for j = 2:length(imgDy)
+    totalDy(j) = totalDy(j-1) + imgDy(j-1);
+end
+
+imgTrnslt = totalDy(end);
+
+% plot both image and gps speed data for the segment
+figure(5), clf, hold on
+plot(imgTimeSeg,totalDy,'b-')
+plot(gpsTime,totalGpsTrnslt,'g')
+ylabel('Distance Traveled (m)');
+xlabel('Time After Start (sec)')
+title(fname, 'Interpreter', 'none' ) 
+
+fprintf('comparing translation for a straight section of road\n')
+fprintf('by gps accumulated difference, D = %0.3f\n',totalGpsTrnslt(end));
+fprintf('by gps difference between start and end points, D = %0.3f\n',GpsTrnslt);
+fprintf('by image accumulated difference, D = %0.3f\n',totalDy(end));
