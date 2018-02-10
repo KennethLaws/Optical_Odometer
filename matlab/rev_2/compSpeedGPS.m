@@ -18,16 +18,7 @@ imgNum = rslt(:,1)' - 1;
 imgTime = imgNum*timeStep;
 
 % load the gps data
-if exist('/Volumes/M2Ext/Test_Drive_1214/GPS_IMU/')
-    imgPath = '/Volumes/M2Ext/Test_Drive_1214/GPS_IMU/';
-elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/GPS_IMU/')
-    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/GPS_IMU/';
-else
-    error('Image folder not found, update image path in script');
-end
-
-gpsFile = strcat(imgPath,'cartest12_14_10_11_58.csv');
-
+gpsFile = 'cartest12_14_10_11_58';
 [yaw, pos] = readGpsImu(gpsFile);
 
 % there are problems with this data, remove points that are between gps
