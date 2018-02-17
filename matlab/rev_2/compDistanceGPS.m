@@ -6,6 +6,15 @@ clear all
 fname = 'seq_image_rslt_05-Feb-2018.mat';
 load(fname);
 
+s = input('apply a calibration shift? (y/n): ','s');
+if s == 'y'
+    disp 'applying clalibration shift'
+    calshift = 0.85;
+else
+    disp 'using standard calibration'
+    calshift = 1;
+end
+
 % load in saved, gap filled image processed data 
 % see: proc_seq_image.m
 % see: plot_seqImage_rslt.m
@@ -16,6 +25,9 @@ load(gapFillName,'vehSpd', 'vehDy');
 timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 imgNum = rslt(:,1)' - 1;
 imgTime = imgNum*timeStep;
+
+% apply extra calibration shift
+vehDy = calshift*vehDy;
 
 % compute accumulated distance travelled
 totalDy = zeros(size(vehDy));
