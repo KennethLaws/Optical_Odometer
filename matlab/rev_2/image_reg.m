@@ -1,5 +1,5 @@
 
-function [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w)
+function [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x,y,h,w)
 % Image registration function
 % Uses inputs 
 % xPix, yPix area of input images to process 
@@ -17,7 +17,7 @@ function [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,
 % image_2 = HanWindow2d(image_2);
 
 
-template = image_1(y1:(y1+h-1),x1:x1+w-1);
+template = image_1(y:(y+h-1),x:x+w-1);
 
 % template = HanWindow2d(template);
 
@@ -29,10 +29,11 @@ c = abs(c);
 
 % zero out edge regions to compensate for edge effects that cause
 % anomolusly high error retrievals
-c((yPix-h-1):end,:) = 0;
-c(1:2,:) = 0;
-c(:,1:2) = 0;
-c(:,(xPix-w-1):end) = 0;
+nBlank = 2; % number of pixels to blank edge region
+c((yPix-h-nBlank):end,:) = 0;
+c(1:nBlank,:) = 0;
+c(:,1:nBlank) = 0;
+c(:,(xPix-w-nBlank):end) = 0;
 
 % normalize 
 c = c - min(c(:));
