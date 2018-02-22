@@ -13,6 +13,9 @@ end
 % load in the raw sequential image processed data
 load(fname);
 
+% temp fix until data are reprocessed with version of proc_seq_image_2d
+% that saves this variable
+
 if ~exist('delta_r')
     delta_r = 924;
 end
@@ -27,14 +30,14 @@ timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 %  fill gaps in translation data, repeat for both template regions:
 % ***************************** Side 1  *********************************
 
-vehDy = rslt1(:,4)';
+vehDy = rslt1(:,4)';        % vehicle translation (meters)
 vehSpd = vehDy/timeStep;
 imgNum = rslt1(:,1)' - 1;
 
-% compute transformation back to pixels
-vehDyPx = rslt1(:,2)';
-Gy = vehDy./vehDyPx;
-Gy = mean(Gy,'omitnan');
+% compute transformation between pixels and meters (calibration factor)
+vehDyPx = rslt1(:,2)';      %vehicle translation (pixels)
+calFact = vehDy./vehDyPx;        % should be constant for every point
+calFact = mean(calFact,'omitnan');    % mean should be equal to the constant value
 
 figure(4), clf
 plot(rslt1(:,1),vehSpd)
@@ -338,26 +341,11 @@ title(fname, 'Interpreter', 'none' )
 % save the result from side 1
 vehSpd2 = vehSpd;
 
-
-% convert speeds back to distance
-dy1 = vehSpd1*timeStep;
-dy2 = vehSpd2*timeStep;
-
-% transform back to pixels
-dyPx1 = dy1/Gy;
-dyPx2 = dy2/Gy;
-
-% compute the change in heading
-delta_theta = (dyPx2 - dyPx1)./delta_r;
-
-%compute the heading
-accHeading = zeros(size(delta_theta));
-for j = 2:length(delta_theta)
-    accHeading(j) = accHeading(j-1) + delta_theta(j);
-end
+% compute the heading and heading shift
+[deltHead, heading] = heading_shift(vehSpd1,vehSpd2,timeStep,calFact,delta_r);
     
 figure(7)
-plot(imgNum,accHeading)
+plot(imgNum,heading)
 xlabel('Image Number')
 ylabel('Heading Change From Initial (deg)')
 
