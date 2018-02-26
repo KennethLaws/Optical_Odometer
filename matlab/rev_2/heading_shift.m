@@ -15,8 +15,24 @@ dy2 = vehSpd2*timeStep;
 dyPx1 = dy1/calFact;
 dyPx2 = dy2/calFact;
 
-% compute the change in heading
-delta_theta = 10*(dyPx2 - dyPx1*.978)./delta_r;
+% apply an arbitrary correction factor
+dyPx1 = dyPx1*.977;
+%dyPx1 = dyPx1;
+
+% compute the difference in pixel shift
+deltPix = dyPx2 - dyPx1;
+
+% ignore shifts that are less than 2 pixels
+deltPix(abs(deltPix)<2.5) = 0;
+
+% compute the change in heading in radians
+delta_theta = deltPix./delta_r;
+
+% convert to degrees
+delta_theta = delta_theta * 180/pi;
+
+% apply an arbitrary correction factor
+delta_theta = 0.2*delta_theta;
 
 % compute the accumulated heading
 accHeading = zeros(size(delta_theta));
