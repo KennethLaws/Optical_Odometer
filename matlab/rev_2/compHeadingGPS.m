@@ -86,6 +86,7 @@ Tv = pos(2:end,1) + dpt;
 
 % shift to align image time with gps time results
 tshift = -27.93;
+tshift = -29.5;
 imgTime = imgTime+tshift;
 
 % trim gps data to match image data time
@@ -104,19 +105,20 @@ plot(Tv,V,'g')
 ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')
 title(fname, 'Interpreter', 'none' ) 
+xlim([-30 140])
 
 % compute the heading and heading shift
 [deltHead, heading] = heading_shift(vehSpd1,vehSpd2,timeStep,calFact,delta_r);
 
-figure(3)
-plot(imgTime,heading)
+figure(2), clf
+plot(imgTime,deltHead)
 
-figure(2), clf, hold on
-plot(imgTime,-heading+270,'b')
+figure(3), clf, hold on
+plot(imgTime,-heading+185,'b')
 plot(yawTime,yawAngle,'g')
 xlabel('Image Time (sec)')
 ylabel('Heading Change From Initial (deg)')
-
+xlim([-30 140])
 
 
 % % compute gps translation for each point
