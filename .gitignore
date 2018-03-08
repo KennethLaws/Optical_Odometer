@@ -1,2 +1,5 @@
+# exclude files
 *.m~
 .DS_Store
+.~lock.*
+
