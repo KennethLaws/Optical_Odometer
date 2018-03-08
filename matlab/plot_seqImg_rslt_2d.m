@@ -4,7 +4,7 @@ function plot_seqImg_rslt_2d(fname)
 % right regions of the image.  The two results are compared to retrieve
 % heading change
 
-
+pathName = 'data/';
 
 if nargin == 0
     fname = 'seq_image2d_rslt_19-Feb-2018.mat';
@@ -59,7 +59,7 @@ vehDy(rslt1(:,6) == 1) = NaN;
 % either load filtered data or filter the raw data to reject bad points ad
 % fill with interpolated data points
 % set name to save or read filtered data set
-gapFillName = ['gapFillS1_',fname];
+gapFillName = [pathName 'gapFillS1_',fname];
 if exist(gapFillName)
     s = input('Use existing filtered data file? (Y/n)','s');
     if s == 'n'
@@ -221,7 +221,7 @@ vehDy(rslt2(:,6) == 1) = NaN;
 % either load filtered data or filter the raw data to reject bad points ad
 % fill with interpolated data points
 % set name to save or read filtered data set
-gapFillName = ['gapFillS2_',fname];
+gapFillName = [pathName 'gapFillS2_',fname];
 if exist(gapFillName)
     s = input('Use existing filtered data file? (Y/n)','s');
     if s == 'n'
@@ -308,9 +308,9 @@ if compFilt == 1
     end
     
     vehDy(rslt2(:,6) == 1) = vehSpd(rslt2(:,6) == 1)*timeStep;
-    save(gapFillName,'vehSpd', 'vehDy');
+    save([pathName gapFillName],'vehSpd', 'vehDy');
 else
-    load(gapFillName,'vehSpd', 'vehDy');
+    load([pathName gapFillName],'vehSpd', 'vehDy');
 end
 
 %total_Y = sum(rslt(rng,4));

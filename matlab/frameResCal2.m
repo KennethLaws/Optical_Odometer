@@ -15,7 +15,7 @@ function p = Test_Drive_1214_calib2
 
 doplot = 0;
 
-if ~exist('calibData.mat')
+if ~exist(['data/' 'calibData.mat'])
     % define a subframe (smaller than maximum)
     imageRes = [1920, 1200];
     w = 256;    % width of subframe

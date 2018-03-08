@@ -3,13 +3,14 @@
 clear all
 
 % load in the raw sequential image processed data
+dataPath = 'data/';
 fname = 'seq_image_rslt_05-Feb-2018.mat';
-load(fname);
+load([dataPath fname]);
 
 % load in saved, gap filled image processed data 
 % see: proc_seq_image.m
 % see: plot_seqImage_rslt.m
-gapFillName = ['gapFill_',fname];
+gapFillName = [dataPath 'gapFill_',fname];
 load(gapFillName,'vehSpd', 'vehDy');
 
 % set time step and image number arrays
@@ -19,7 +20,7 @@ imgTime = imgNum*timeStep;
 
 % load the gps data
 gpsFile = 'cartest12_14_10_11_58';
-[yaw, pos] = readGpsImu(gpsFile);
+[yaw, pos] = readGpsImu_stream([dataPath gpsFile]);
 
 % there are problems with this data, remove points that are between gps
 % samples
@@ -40,18 +41,21 @@ y0 = pos(sp,3);
 pos(:,1) = pos(:,1) - pos(166,1);
 pos(:,2) = pos(:,2) - pos(166,2);
 pos(:,3) = pos(:,3) - pos(166,3);
+pos(:,4) = pos(:,4) - pos(166,4);
 
 % reference yaw time to start time
 yaw(:,1) = yaw(:,1) - yaw(166,1);
 
 dx = diff(pos(:,2));
 dy = diff(pos(:,3));
+dz = diff(pos(:,4));
 dpt = diff(pos(:,1));
 
 
 vx = dx./dpt;
 vy = dy./dpt;
-V = sqrt(vx.^2 +vy.^2);
+vz = dz./dpt;
+V = sqrt(vx.^2 +vy.^2 + vz.^2);
 Tv = pos(2:end,1) + dpt;
 
 % try to sync up the results by shifting the image time variable

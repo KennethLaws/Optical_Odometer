@@ -150,8 +150,8 @@ end
 
 % fill gaps created by data rejection
 
-
-rsltFile = ['seq_image_rslt_',date];
+pathName = 'data/';
+rsltFile = [pathName 'seq_image_rslt_',date];
 if exist([rsltFile '.mat'])
     s = input('result file exists, overwrite (y/n): ','s');
 else

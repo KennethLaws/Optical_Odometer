@@ -3,8 +3,9 @@
 clear all
 
 % load in the raw sequential image processed data
+dataPath = 'data/';
 fname = 'seq_image2d_rslt_19-Feb-2018.mat';
-load(fname);
+load([dataPath fname]);
 
 % s = input('apply a calibration shift? (y/n): ','s');
 % if s == 'y'
@@ -30,10 +31,10 @@ calFact = mean(calFact,'omitnan');    % mean should be equal to the constant val
 % load in saved, gap filled image processed data for each image side
 % see: proc_seq_image.m
 % see: plot_seqImage_rslt.m
-gapFillName = ['gapFillS1_',fname];
+gapFillName = [dataPath 'gapFillS1_',fname];
 load(gapFillName,'vehSpd', 'vehDy');
 vehSpd1 = vehSpd;
-gapFillName = ['gapFillS2_',fname];
+gapFillName = [dataPath 'gapFillS2_',fname];
 load(gapFillName,'vehSpd', 'vehDy');
 vehSpd2 = vehSpd;
 
@@ -47,7 +48,7 @@ vehDy = calshift*vehDy;
 
 % load the gps data
 gpsFile = 'cartest12_14_10_11_58';
-[yaw, pos] = readGpsImu(gpsFile);
+[yaw, pos] = readGpsImu_stream([dataPath gpsFile]);
 
 
 % there are problems with this data, remove points that are between gps

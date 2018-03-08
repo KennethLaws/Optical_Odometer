@@ -3,11 +3,11 @@
 % used for calibration and validation for data set 12/14/17
 
 clear;
-
+pathName = 'data/';
 %fname = 'seq_image_rslt_1214_1.mat';
 fname = 'seq_image_rslt.mat';
 % rslt(step,:) = [step, deltPosPix, dy_inches, snr_db];
-load(fname);
+load([pathName fname]);
 
 % start and end image by image number
 img_start = 0;

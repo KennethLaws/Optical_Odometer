@@ -3,7 +3,7 @@ function plot_seqImg_rslt(fname)
 % plot_seqImg_rslt
 
 
-
+dataPath = 'data/';
 if nargin == 0
     fname = 'seq_image_rslt_05-Feb-2018.mat';
 end
@@ -12,7 +12,7 @@ end
 gapFillName = ['gapFill_',fname];
 
 % load in the raw sequential image processed data
-load(fname);
+load([dataPath fname]);
 
 % % start and end image by image number
 % img_start = 0;
@@ -45,7 +45,7 @@ vehDy(rslt(:,6) == 1) = NaN;
 
 % either load filtered data or filter the raw data to reject bad points ad
 % fill with interpolated data points
-if exist(gapFillName)
+if exist([dataPath gapFillName])
     s = input('Use existing filtered data file? (Y/n)','s');
     if s == 'n'
         disp 'computing gap filling filter data' 
@@ -145,10 +145,10 @@ if compFilt == 1
     end
     
     vehDy(rslt(:,6) == 1) = vehSpd(rslt(:,6) == 1)*timeStep;
-    save(gapFillName,'vehSpd', 'vehDy');
+    save([dataPath gapFillName],'vehSpd', 'vehDy');
 end
 
-load(gapFillName,'vehSpd', 'vehDy');
+load([dataPath gapFillName],'vehSpd', 'vehDy');
 
 %total_Y = sum(rslt(rng,4));
 total_Y = sum(vehDy);
