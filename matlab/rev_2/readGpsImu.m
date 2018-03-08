@@ -20,7 +20,7 @@
 %   85: ['pressure',    ''],              # ???
 %   86: ['battemp', ''],                  # centigrade
 
-function [yaw, pos] = readGpsImu(gpsFile)
+function [yaw, gps_xyz] = readGpsImu(gpsFile)
 
 
 if ~exist([gpsFile, '_GPS.mat']);
@@ -59,19 +59,23 @@ if ~exist([gpsFile, '_GPS.mat']);
     % gps velocity x,y,z
     
     % gps lat, lon, altitude
+    % put time, lat, lon in the array
     idx = find(data(:,2) == 1);
     gps = [data(idx,1), data(idx,3:4)];
     
     % gps orientation x,y,z angles
+    % put attitude into an array, time, x,y,z
     idx = find(data(:,6) == 81);
     angles = [data(idx,1), data(idx,7:9)];
     
     % gps orientation x,y,z angles
+    % put attitude into an array, time, x,y,z
     idx = find(data(:,10) == 81);
     tmp = [data(idx,1), data(idx,11:13)];
     angles = [angles; tmp];
     
     % gps cartesian cooridnates
+    % put gps position into an array, time,x,y,z
     idx = find(data(:,10) == 6);
     tmp = [data(idx,1), data(idx,11:13)];
     gps_xyz = [tmp];
@@ -82,6 +86,7 @@ if ~exist([gpsFile, '_GPS.mat']);
     angles = [angles; tmp];
     
     % gps cartesian cooridnates
+    % put gps position into an array, time,x,y,z
     idx = find(data(:,14) == 6);
     tmp = [data(idx,1), data(idx,15:17)];
     gps_xyz = [gps_xyz; tmp];
@@ -96,6 +101,7 @@ if ~exist([gpsFile, '_GPS.mat']);
     gpsv = [gpsv; tmp];
     
     % gps cartesian cooridnates (m)
+    % put gps position into an array, time,x,y,z
     idx = find(data(:,18) == 6);
     tmp = [data(idx,1), data(idx,19:21)];
     gps_xyz = [gps_xyz; tmp];
@@ -121,15 +127,15 @@ if ~exist([gpsFile, '_GPS.mat']);
     angles = [angles; tmp];
     
     yaw = angles(:,[1 2]);  % keep just the heading and the time
-    pos = gps_xyz(:,1:3);   % keep just x,y, time
+    gps_xyz(:,1:3);   % keep just x,y, time
     
     [b,I] = sort(yaw(:,1));  % sort the heading by time
     yaw = yaw(I,:);
     
-    [b,I] = sort(pos(:,1));  % sort the cartesion position by time
-    pos = pos(I,:);
+    [b,I] = sort(gps_xyz(:,1));  % sort the cartesion position by time
+    gps_xyz = gps_xyz(I,:);
     
-    save([gpsFile, '_GPS.mat'], 'pos', 'yaw');
+    save([gpsFile, '_GPS.mat'], 'gps_xyz', 'yaw');
 else
     fprintf([' Loading saved gps file: ' gpsFile, '_GPS.mat from disk\n']);
     load([gpsFile, '_GPS.mat']);

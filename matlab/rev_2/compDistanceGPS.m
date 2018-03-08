@@ -9,7 +9,7 @@ load(fname);
 s = input('apply a calibration shift? (y/n): ','s');
 if s == 'y'
     disp 'applying clalibration shift'
-    calshift = 0.85;
+    calshift = 1.1;
 else
     disp 'using standard calibration'
     calshift = 1;
@@ -37,38 +37,42 @@ end
 
 % load the gps data
 gpsFile = 'cartest12_14_10_11_58';
-[yaw, pos] = readGpsImu(gpsFile);
+[yaw, gps_xyz] = readGpsImu(gpsFile);
 
 
 % there are problems with this data, remove points that are between gps
 % samples
-dpt = diff(pos(:,1));
+dpt = diff(gps_xyz(:,1));
 idx = find(dpt > 0.3);
-pos = pos(idx,:);
+gps_xyz = gps_xyz(idx,:);
 yaw = yaw(idx,:);
 
 % select a start point
 sp = 110;
-t0 = pos(sp,1);
-x0 = pos(sp,2);
-y0 = pos(sp,3);
+t0 = gps_xyz(sp,1);
+x0 = gps_xyz(sp,2);
+y0 = gps_xyz(sp,3);
+z0 = gps_xyz(sp,4);
 
 % reference position to start point
-pos(:,1) = pos(:,1) - pos(sp,1);
-pos(:,2) = pos(:,2) - pos(sp,2);
-pos(:,3) = pos(:,3) - pos(sp,3);
+gps_xyz(:,1) = gps_xyz(:,1) - gps_xyz(sp,1);
+gps_xyz(:,2) = gps_xyz(:,2) - gps_xyz(sp,2);
+gps_xyz(:,3) = gps_xyz(:,3) - gps_xyz(sp,3);
+gps_xyz(:,4) = gps_xyz(:,4) - gps_xyz(sp,4);
 
 % reference yaw time to start point
 yaw(:,1) = yaw(:,1) - yaw(sp,1);
 
-dx = diff(pos(:,2));
-dy = diff(pos(:,3));
-dpt = diff(pos(:,1));
+dx = diff(gps_xyz(:,2));
+dy = diff(gps_xyz(:,3));
+dz = diff(gps_xyz(:,4));
+dpt = diff(gps_xyz(:,1));
 
 vx = dx./dpt;
 vy = dy./dpt;
-V = sqrt(vx.^2 +vy.^2);
-Tv = pos(2:end,1) + dpt;
+vz = dz./dpt;
+V = sqrt(vx.^2 +vy.^2 + vz.^2);
+Tv = gps_xyz(2:end,1) + dpt;
 
 
 
@@ -81,11 +85,12 @@ imgTime = imgTime+tshift;
 % trim gps data to match image data time
 p1 = 80;
 p2 = 671;
-pos = pos(p1:p2,:);
+gps_xyz = gps_xyz(p1:p2,:);
 Tv = Tv(p1:p2);
 V = V(p1:p2);
 dx = dx(p1:p2);
 dy = dy(p1:p2);
+dz = dz(p1:p2);
 
 % plot both image and gps speed data
 figure(1), clf, hold on
@@ -97,12 +102,12 @@ title(fname, 'Interpreter', 'none' )
 
 
 % compute gps translation for each point
-vehDyGps = sqrt(dx.^2 + dy.^2);
+vehTrnsltGps = sqrt(dx.^2 + dy.^2 +dz.^2);
 
 % compute accumulated distance travelled by gps
-totalGpsDy = zeros(size(vehDyGps));
-for j = 2:length(vehDyGps)
-    totalGpsDy(j) = totalGpsDy(j-1) + vehDyGps(j-1);
+totalGpsTrnslt = zeros(size(vehTrnsltGps));
+for j = 2:length(vehTrnsltGps)
+    totalGpsTrnslt(j) = totalGpsTrnslt(j-1) + vehTrnsltGps(j-1);
 end
 
 % % plot position data
@@ -136,7 +141,7 @@ end
 % plot both image and gps translation data
 figure(2), clf, hold on
 plot(imgTime,totalDy,'b-')
-plot(Tv,totalGpsDy,'g')
+plot(Tv,totalGpsTrnslt,'g')
 ylabel('Distance Traveled (m)');
 xlabel('Image Number')
 title(fname, 'Interpreter', 'none' ) 
@@ -144,23 +149,27 @@ title(fname, 'Interpreter', 'none' )
 % examine a selected straight section using gps start and end points as
 % check for gps total distance traveled
 % plot position data
-figure(3), clf, hold on
-plot(pos(:,2),pos(:,3),'.')
-plot(pos(sp,2),pos(sp,3),'r.')  % overplot the start point (red dot)
-xlabel('position x (m)')
-ylabel('position y (m)')
+%**************************** there is a problem here ******************
+% position in these coordinates is 3d, x,y is not a projection on a 2d
+% plane of flat earth
+% figure(3), clf, hold on
+% plot(gps_xyz(:,2),gps_xyz(:,3),'.')
+% plot(gps_xyz(sp,2),gps_xyz(sp,3),'r.')  % overplot the start point (red dot)
+% xlabel('position x (m)')
+% ylabel('position y (m)')
 
 % overplot a straight segment of the route in green
 t1 = 80.0548;
 t2 = 101.079;
-idx_gps = find(pos(:,1) > t1 & pos(:,1) < t2);
-gpsPos = pos(idx_gps,:);
-plot(gpsPos(:,2),gpsPos(:,3),'g.')
+idx_gps = find(gps_xyz(:,1) > t1 & gps_xyz(:,1) < t2);
+gpsPos = gps_xyz(idx_gps,:);
+% plot(gpsPos(:,2),gpsPos(:,3),'g.')
 
 
 dx = diff(gpsPos(:,2));
 dy = diff(gpsPos(:,3));
-vehGpsTrnslt = sqrt(dx.^2 + dy.^2);  
+dz = diff(gpsPos(:,4));
+vehGpsTrnslt = sqrt(dx.^2 + dy.^2 + dz.^2);  
 % % deltGpsTime = diff(gpsPos(:,1));  % time between points
 
 % vx = dx./deltGpsTime;
@@ -177,7 +186,8 @@ end
 % compute total distance by GPS start and end points
 dx = gpsPos(end,2) - gpsPos(1,2);
 dy = gpsPos(end,3) - gpsPos(1,3);
-GpsTrnslt = sqrt(dx^2 + dy^2);
+dz = gpsPos(end,4) - gpsPos(1,4);
+GpsTrnslt = sqrt(dx^2 + dy^2 + dz^2);
 
 
 % compute accumulated distance travelled by image processing
@@ -206,17 +216,18 @@ fprintf('by gps difference between start and end points, D = %0.3f\n',GpsTrnslt)
 fprintf('by image accumulated difference, D = %0.3f\n',totalDy(end));
 
 % repeat the comparison for the second pass over the same roadway
-figure(3)
+% figure(3)
 % overplot a straight segment of the route
 t1 = 308.079;
 t2 = 331.08;
-idx_gps = find(pos(:,1) > t1 & pos(:,1) < t2);
-gpsPos = pos(idx_gps,:);
-plot(gpsPos(:,2),gpsPos(:,3),'c*')
+idx_gps = find(gps_xyz(:,1) > t1 & gps_xyz(:,1) < t2);
+gpsPos = gps_xyz(idx_gps,:);
+%plot(gpsPos(:,2),gpsPos(:,3),'c*')
 
 dx = diff(gpsPos(:,2));
 dy = diff(gpsPos(:,3));
-vehGpsTrnslt = sqrt(dx.^2 + dy.^2);  
+dz = diff(gpsPos(:,4));
+vehGpsTrnslt = sqrt(dx.^2 + dy.^2 + dz.^2);  
 gpsTime = gpsPos(:,1);
 
 % compute accumulated distance travelled
@@ -228,7 +239,8 @@ end
 % compute total distance by GPS start and end points
 dx = gpsPos(end,2) - gpsPos(1,2);
 dy = gpsPos(end,3) - gpsPos(1,3);
-GpsTrnslt = sqrt(dx^2 + dy^2);
+dz = gpsPos(end,4) - gpsPos(1,4);
+GpsTrnslt = sqrt(dx^2 + dy^2 + dz.^2);
 
 % compute accumulated distance travelled by image processing
 idx_img = find(imgTime > t1 & imgTime < t2);
@@ -253,4 +265,4 @@ title(fname, 'Interpreter', 'none' )
 fprintf('comparing translation for a straight section of road\n')
 fprintf('by gps accumulated difference, D = %0.3f\n',totalGpsTrnslt(end));
 fprintf('by gps difference between start and end points, D = %0.3f\n',GpsTrnslt);
-fprintf('by image accumulated difference, D = %0.3f\n',totalDy(end));
+fprintf('by image accumulated difference, D = %0.3f\n\n\n',totalDy(end));
