@@ -70,7 +70,7 @@ class AR700(object):
 			except Exception as e:
 				pass
 			if len(d) > 1:
-				print("%f, %s" % (tnow, d))
+				# print("%f, %s" % (tnow, d))
 				fid.write("%f, %s" % (tnow, d))
 		fid.close()
 

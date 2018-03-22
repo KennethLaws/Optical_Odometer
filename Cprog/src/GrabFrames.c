@@ -23,7 +23,9 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <time.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <pylonc/PylonC.h>
 
 #define CHECK( errc ) if ( GENAPI_E_OK != errc ) printErrorAndExit( errc )
@@ -40,7 +42,7 @@ void getMinMax( const unsigned char* pImg, int32_t width, int32_t height,
 
 //#define NUM_GRABS 40000         /* Number of images to grab. */
 #define NUM_BUFFERS 5         /* Number of buffers used for grabbing. */
-#define RECORD_TIME 600          // record time interval (sec)
+#define RECORD_TIME 10          // record time interval (sec)
 
 int main(void)
 {
@@ -55,8 +57,8 @@ int main(void)
     PylonGrabResult_t           grabResult;               /* Stores the result of a grab operation. */
     int                         nImg;                   /* Counts the number of buffers grabbed. */
     size_t                      nStreams;                 /* The number of streams the device provides. */
-    _Bool                        isAvail;                  /* Used for checking feature availability. */
-    _Bool                        isReady;                  /* Used as an output parameter. */
+    _Bool                       isAvail;                  /* Used for checking feature availability. */
+    _Bool                       isReady;                  /* Used as an output parameter. */
     size_t                      i;                        /* Counter. */
 
 
@@ -277,15 +279,22 @@ int main(void)
     res = PylonDeviceExecuteCommandFeature( hDev, "AcquisitionStart");
     CHECK(res);
 
-        FILE *fp;
-        #define LEN 256
-        char fname[LEN];
-        time_t now;
-        struct tm * time_info;
-        struct timeval start, end, check;
-        long secs_used,micros_used;
-        double elTime;
-        int remain,lock;
+    FILE *fp;
+    #define LEN 24
+    #define DIRLEN 40
+    char fName[LEN];
+    char dirName[DIRLEN];
+    char fullName[DIRLEN+LEN];
+    char timeTag[15];
+    time_t now;
+    struct tm * time_info;
+    struct timeval start, end, check;
+    long secs_used,micros_used;
+    double elTime;
+    double time_in_mill;
+    double time_in_sec;
+    int remain,lock;
+    struct stat st = {0};
 
     /* Grab NUM_GRABS images */
     nImg = 0;                         /* Counts the number of images grabbed since in current second*/
@@ -315,15 +324,38 @@ int main(void)
         }
 
 
-
+        // generate a new folder name for each second
+        fName[0] = 0;
+        dirName[0] = 0;
         time(&now);
         time_info = localtime(&now);
+        strftime(dirName, DIRLEN, "/media/kip/960Pro/%Y%m%d%H%M%S", time_info);
+        printf("checking folder: %s \n",dirName);
+        if (stat(dirName, &st) == -1) {
+            printf("creating folder\n");
+            mkdir(dirName, 0700);
+        }else{
+            printf("folder exists\n");
+        }
 
-        strftime(fname, LEN, "/media/earthmine/960Pro/img_%Y-%m-%d-%H%M%S", time_info);
-        sprintf(fname,"%s_%02d.tmp",fname,nImg);
-        //printf("File name: %s-%d\n",fname,nImg);
+        // build the file name with path
+        printf("dirName: %s\n",dirName);
 
-        fp = fopen (fname,"wb");
+        // when image data has arrived from the camera give it a time tag in ms
+        gettimeofday(&check, NULL);
+        time_in_mill = check.tv_usec/1E3;
+        time_in_sec = check.tv_sec;
+        sprintf(timeTag,"%0.0f",time_in_sec*1000 + time_in_mill);
+        // printf("time in ms: %f\n",time_in_sec*1000);
+        //printf("time in ms: %s\n",timeTag);
+
+        //sprintf(fName,"");
+        //printf("fName: %s \n",fName);
+        sprintf(fullName,"%s/%s.bin",dirName,timeTag);
+        printf("path+file: %s\n",fullName);
+
+        // open the image output file
+        fp = fopen (fullName,"wb");
         if (fp!=NULL)
         {
         
