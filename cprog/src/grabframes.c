@@ -42,9 +42,9 @@ void getMinMax( const unsigned char* pImg, int32_t width, int32_t height,
 
 //#define NUM_GRABS 40000         /* Number of images to grab. */
 #define NUM_BUFFERS 5         /* Number of buffers used for grabbing. */
-#define RECORD_TIME 10          // record time interval (sec)
+// #define recordTime 10          // record time interval (sec)
 
-int main(void)
+int main(int argc, char *argv[])
 {
     GENAPIC_RESULT              res;                      /* Return value of pylon methods. */
     size_t                      numDevices;               /* Number of available devices. */
@@ -60,8 +60,14 @@ int main(void)
     _Bool                       isAvail;                  /* Used for checking feature availability. */
     _Bool                       isReady;                  /* Used as an output parameter. */
     size_t                      i;                        /* Counter. */
+    int                         recordTime=0;
 
-
+    if(argc == 1){
+        printf("usage: grabframes <nSeconds>\n");
+        printf("include number of seconds to collect images (nSeconds)\n");
+        exit(0);
+    }
+    recordTime = atoi(argv[1]);
 
     /* Before using any pylon methods, the pylon runtime must be initialized. */
     PylonInitialize();
@@ -281,7 +287,7 @@ int main(void)
 
     FILE *fp;
     #define LEN 24
-    #define DIRLEN 40
+    #define DIRLEN 48
     char fName[LEN];
     char dirName[DIRLEN];
     char fullName[DIRLEN+LEN];
@@ -299,11 +305,11 @@ int main(void)
     /* Grab NUM_GRABS images */
     nImg = 0;                         /* Counts the number of images grabbed since in current second*/
 
-    printf("Starting timed recording for %d seconds\n", RECORD_TIME);
+    printf("Starting timed recording for %d seconds\n", recordTime);
     printf("capturing images from camera at maximum frame rate...\n");
     gettimeofday(&start, NULL);
     check = start;
-    remain = start.tv_sec - check.tv_sec + RECORD_TIME;
+    remain = start.tv_sec - check.tv_sec + recordTime;
     lock = 0;
     printf("\ttime remaining: %d\r",remain);
     fflush( stdout );
@@ -313,7 +319,7 @@ int main(void)
         unsigned char min, max;
 
         gettimeofday(&check, NULL);         // check the time elapsed since start
-        remain = start.tv_sec - check.tv_sec + RECORD_TIME;
+        remain = start.tv_sec - check.tv_sec + recordTime;
 
         // print the progress - this does not work, looks like buffer is not being sent to screen
         // printf("remain: %d   lock: %d\n",remain,lock);
@@ -329,17 +335,17 @@ int main(void)
         dirName[0] = 0;
         time(&now);
         time_info = localtime(&now);
-        strftime(dirName, DIRLEN, "/media/kip/960Pro/%Y%m%d%H%M%S", time_info);
+        strftime(dirName, DIRLEN, "/media/kip/960Pro/images/%Y%m%d%H%M%S", time_info);
         printf("checking folder: %s \n",dirName);
         if (stat(dirName, &st) == -1) {
-            printf("creating folder\n");
+            //printf("creating folder\n");
             mkdir(dirName, 0700);
         }else{
-            printf("folder exists\n");
+            //printf("folder exists\n");
         }
 
         // build the file name with path
-        printf("dirName: %s\n",dirName);
+        //printf("dirName: %s\n",dirName);
 
         // when image data has arrived from the camera give it a time tag in ms
         gettimeofday(&check, NULL);
@@ -352,7 +358,7 @@ int main(void)
         //sprintf(fName,"");
         //printf("fName: %s \n",fName);
         sprintf(fullName,"%s/%s.bin",dirName,timeTag);
-        printf("path+file: %s\n",fullName);
+        //printf("path+file: %s\n",fullName);
 
         // open the image output file
         fp = fopen (fullName,"wb");

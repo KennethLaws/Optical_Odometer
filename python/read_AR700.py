@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+# Created on: 02/28/2018
+#    Authors: Kenneth Laws
+#             HERE.com
+#
+# communicate with a serial device (Aquity AR700 laser rangefinder).import subprocess
 
 from range_finder import AR700
 
@@ -11,7 +16,7 @@ with AR700() as rngSnsr:
 	print("configuring AR700 for %f Hz data rate" % dataRate)
 	rngSnsr.configAR700(dataRate)
 
-	runTime = 60
+	runTime = 10 		# run duration in seconds
 	print "starting data collection, collecting for %d seconds" % runTime
 	# read from the device for given number of seconds and store to disk file 
 	rngSnsr.read_nsec(runTime)

@@ -61,7 +61,7 @@ class AR700(object):
 	def read_nsec(self, n=0):
 		tStart = time.time()
 		tEnd = tStart + n
-		fname = "./AR700.txt"
+		fname = "/media/kip/960Pro/rangefinder/AR700.txt"
 		fid = open(fname, "w")
 		while time.time() < tEnd:
 			tnow = time.time()
