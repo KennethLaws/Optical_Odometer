@@ -319,13 +319,15 @@ int main(void)
         time(&now);
         time_info = localtime(&now);
 
+        // generate a file name using current time with 1 sec resolution
         strftime(fname, LEN, "/media/earthmine/960Pro/img_%Y-%m-%d-%H%M%S", time_info);
+        
+        // append the image number (step number) to the file name
         sprintf(fname,"%s_%02d.tmp",fname,nImg);
         //printf("File name: %s-%d\n",fname,nImg);
 
         fp = fopen (fname,"wb");
-        if (fp!=NULL)
-        {
+        if (fp!=NULL){
         
             /* Wait for the next buffer to be filled. Wait up to 1000 ms. */
             res = PylonWaitObjectWait( hWait, 1000, &isReady );
@@ -351,14 +353,12 @@ int main(void)
                 break;
             }
 
-            nImg++;
 
             /* Get the buffer index from the context information. */
             bufferIndex = (size_t) grabResult.Context;
 
             /* Check to see if the image was grabbed successfully. */
-            if ( grabResult.Status == Grabbed )
-            {
+            if ( grabResult.Status == Grabbed ){
                 /*  Success. Perform image processing. Since we passed more than one buffer
                 to the stream grabber, the remaining buffers are filled while
                 we do the image processing. The processed buffer won't be touched by
@@ -398,13 +398,13 @@ int main(void)
             /* Once finished with the processing, requeue the buffer to be filled again. */
             res = PylonStreamGrabberQueueBuffer( hGrabber, grabResult.hBuffer, (void*) bufferIndex );
             CHECK(res);
-
-
-                    fclose (fp);
+            fclose (fp);
         }
         else{
             printf("Failed to open output file\n");
         }
+        // increment step number
+        nImg++;
     }
 
     gettimeofday(&end, NULL);
