@@ -1,2 +1,6 @@
+# exclude files
 *.m~
 .DS_Store
+.~lock.*
+AR700.txt
+
