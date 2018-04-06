@@ -2,7 +2,7 @@
 .PHONY: all clean
 
 # The program to build
-NAME       := ImageRecord
+NAME       := grabframes
 
 # Installation directories for pylon
 PYLON_ROOT ?= /opt/pylon5
