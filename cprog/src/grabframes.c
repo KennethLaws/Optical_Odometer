@@ -336,7 +336,7 @@ int main(int argc, char *argv[])
         time(&now);
         time_info = localtime(&now);
         strftime(dirName, DIRLEN, "/media/kip/960Pro/images/%Y%m%d%H%M%S", time_info);
-        printf("checking folder: %s \n",dirName);
+        // printf("checking folder: %s \n",dirName);
         if (stat(dirName, &st) == -1) {
             //printf("creating folder\n");
             mkdir(dirName, 0700);

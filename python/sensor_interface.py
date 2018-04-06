@@ -95,7 +95,8 @@ class AR700(object):
 	def configAR700(self, dataRate = 2):
 		rateParam = int(200000/dataRate) 	# default is 2 Hz
 		print "config rangefinder, rateParam = %d" % rateParam
-		self._deviceSerial.write(("S%d." % rateParam))
+		self._deviceSerial.write("S%d." % rateParam)  		# set the data rate
+		self._deviceSerial.write("A2")						# zero based metric units ASCII
 
 	def read_nsec(self, n=0):
 		tStart = time.time()
@@ -103,22 +104,26 @@ class AR700(object):
 		print "starting logging, %d seconds" % n
 		fname = "/media/kip/960Pro/rangefinder/AR700.txt"
 		fid = open(fname, "w")
+		firstLine = 0
+		bigTextArray = "% time 	distance \r\n"
 		while time.time() < tEnd:
 			tnow = time.time()
+			d="";
 			try:
 				d = self._read_serial()
 			except Exception as e:
 				pass
-			if len(d) > 1:
+			if len(d) > 1 & len(d) < 10:
 				# print("%f, %s" % (tnow, d))
-				fid.write("%f, %s" % (tnow, d))
-			time.sleep(.00001)
+				bigTextArray =  "%s%s\t%s" % ( bigTextArray, str(tnow), d )
 
+			# time.sleep(.001)
+		fid.write(bigTextArray)
 		fid.close()
 		self._deviceSerial.close()
 
 
-# class spanCPT6(threading.Thread):
+
 class spanCPT6(object):
 
 	def __init__(self, comm='Serial', arg=None, timeout=5.0):
@@ -164,7 +169,7 @@ class spanCPT6(object):
 	Section Petaining to serial only
 	"""
 	def _initSerial(self, port='/dev/ttyGPS'):
-		# print "setting up span CPT on port ttyGPS"
+		print "setting up span CPT on port ttyGPS"
 		self._deviceSerial = serial.Serial(port,115200, timeout=self._timeout)
 
 
@@ -179,7 +184,7 @@ class spanCPT6(object):
 				message += c
 			else:
 				raise Exception("Timeout")
-			time.sleep(.00001)
+			# time.sleep(.00001)
 
 	def _read_cmnd_resp(self):
 		timeout_time = time.time() + self._timeout
@@ -194,18 +199,19 @@ class spanCPT6(object):
 					return message
 			else:
 				raise Exception("Timeout")
-			time.sleep(.00001)
+			# time.sleep(.00001)
 
 	def log_session(self, dataRate = 2, runTime = 5):
 		period = 1.0/dataRate 	# default is 2 Hz
 		endTime = time.time() + runTime
 
 		# stop any logging processes that might be running
-		# print("clear all span logging")
+		print("clear all span logging")
 		self._deviceSerial.write('UNLOGALL USB1 TRUE\r\n')
 		s = self._read_cmnd_resp()
 
 		# start data logging 
+		print("starting span log session")
 		self._deviceSerial.write('LOG USB1 BESTPOSA ONTIME %0.1f\r\n' % period)
 		s = self._read_line()
 		s = self._read_line()
@@ -220,6 +226,7 @@ class spanCPT6(object):
 		fname = "/media/kip/960Pro/gps/span6.txt"
 		fid = open(fname, "w")
 
+		bigTextArray = "gps data \r\n"
 		# read in streaming data for given duration time
 		while time.time() < endTime: 
 			# start logging best position data
@@ -227,11 +234,12 @@ class spanCPT6(object):
 			# log data, ignore port id line
 			# if '[USB1]' not in s:
 			# 	print(s)
-			# write data line to disk file
-			if  len(s) > 1:
-				fid.write("%s" % s)
+			if  '[USB1]' not in s:
+				bigTextArray = "%s%s" % (bigTextArray, s)
+				
 
 		# close the file
+		fid.write(bigTextArray)
 		fid.close()
 
 
