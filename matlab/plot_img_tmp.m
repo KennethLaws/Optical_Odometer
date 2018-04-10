@@ -13,15 +13,15 @@ clear all;
 
 % set the file names
 
-if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
-    imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
-elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/calib2/')
-    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/calib2/';
+if exist('/Volumes/M2Ext/Test_Drive_0404/')
+    imgPath = '/Volumes/M2Ext/Test_Drive_0404/images/20180404154626/';
+elseif exist('/media/earthmine/M2Ext/Test_Drive_0404/')
+    imgPath = '/media/earthmine/M2Ext/Test_Drive_0404/images/';
 else
     error('Image folder not found, update image path in script');
 end
 
-imgFile1 = strcat(imgPath,'img_2017-12-14-100226_49.tmp');
+imgFile1 = strcat(imgPath,'1522881986197.bin');
 
 
 tic;
