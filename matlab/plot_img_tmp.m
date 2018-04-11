@@ -15,13 +15,13 @@ clear all;
 
 if exist('/Volumes/M2Ext/Test_Drive_1214/calib2/')
     imgPath = '/Volumes/M2Ext/Test_Drive_1214/calib2/';
-elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/calib2/')
-    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/calib2/';
+elseif exist('/media/kip/960Pro/images/')
+    imgPath = '/media/kip/960Pro/images/20180410121727/';
 else
     error('Image folder not found, update image path in script');
 end
 
-imgFile1 = strcat(imgPath,'img_2017-12-14-100226_49.tmp');
+imgFile1 = strcat(imgPath,'1523387847996.bin');
 
 
 tic;

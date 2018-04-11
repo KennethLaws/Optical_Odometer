@@ -10,7 +10,7 @@ import threading
 from sensor_interface import AR700
 from sensor_interface import spanCPT6
 
-runTime = 5						# runt time in seconds
+runTime = 600						# runt time in seconds
 
 """
 start the gps
@@ -43,10 +43,10 @@ rnglogging = threading.Thread(target=rngSnsr.read_nsec, args=(runTime, ) )
 rnglogging.daemon = True
 rnglogging.start()
 
-# # start the camera
-# print("launching frame grabber")
-# proc = ['../cprog/src/grabframes', '5']
-# subprocess.Popen(proc)
+# start the camera
+print("launching frame grabber")
+proc = ['../cprog/src/grabframes', '600']
+subprocess.Popen(proc)
 
 # wait for threads to complete, threads will not continue if main exits
 gpslogging.join()
