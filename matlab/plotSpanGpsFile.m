@@ -1,3 +1,8 @@
+% Project           :: Optical Odometer
+% Author            :: Kenneth Laws
+%                   :: Here Technologies
+% Creation Date     :: 12/14/2017
+%
 %
 % Read and parse the GPS/IMU file
 clear all;

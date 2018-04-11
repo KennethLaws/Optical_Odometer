@@ -1,7 +1,9 @@
+% Project           :: Optical Odometer
+% Author            :: Kenneth Laws
+%                   :: Here Technologies
+% Creation Date     :: 10/16/2017
+%
 % Process images to determine x y shift in position
-% Kenneth Laws
-% 10/16/2017
-
 % adds calculation of resolution in pix/m from measured frame size
 % adds printout of setup parameters
 % removes use of camera height and resolution calculation (pix/m) these
