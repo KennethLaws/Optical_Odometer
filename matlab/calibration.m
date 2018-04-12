@@ -4,8 +4,11 @@ function P = calibration
 %                   :: Here Technologies
 % Creation Date     :: 01/05/2017
 % Modified          :: 04/11/2018
+%
+% set calibration in meters per pixel
+%
 % Change Log:
-% modified calibration to use range finder
+% 4/11/2018 modified calibration to use range finder
 % Calibration is done using part of the calibration/validation drive data set
 % as a training set.  It is assumed that the calibration of distance per
 % pixel is constant over the frame and given by

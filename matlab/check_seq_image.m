@@ -2,8 +2,11 @@
 % Author            :: Kenneth Laws
 %                   :: Here Technologies
 % Creation Date     :: 10/16/2017
+% Modified          :: 04/11/2018
 %
 % Process images to determine x y shift in position
+%
+% change log:
 % adds calculation of resolution in pix/m from measured frame size
 % adds printout of setup parameters
 % removes use of camera height and resolution calculation (pix/m) these
@@ -22,16 +25,15 @@ yPix = 1920;
 x1 = (imageRes(2) - w)/2;
 y1 = 100;
 
+% set the path to the image folder
 imgPath = getImgPath;
 
-step = 0;       % keep track of image step
 
 % get calibration data
 calib = calibration;
 
 disp 'Check sequential images'
-%step = input('Enter starting step number: ');
-step = 1;
+step = input('Enter starting step number: ');
 
 while 1
 
