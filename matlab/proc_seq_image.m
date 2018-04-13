@@ -42,6 +42,9 @@ y1 = 100;
 % get calibration data
 calib = calibration;
 
+% read in the range finder data
+
+
 % begin processing selected data set
 step = 0;       % keep track of image step
 while 1

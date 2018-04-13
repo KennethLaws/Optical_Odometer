@@ -10,7 +10,8 @@ function imageTime = image_time(fname)
 % location has been completed.
 % the file name must follow the convention that the 13 digits preceding the
 % '.' are a valid time number the corresponds to the time of the image.
-%
+% For now, I am not sure of the time format or pivot year, this will need
+% to be worked out
 % change log:
 %
 
