@@ -30,7 +30,9 @@ function P = calibration
 % D = * C * [ sum(n_i * (d_i + H)) ]
 % C = D / [sum(n_i * (d_i + H))]
 
-
-P = 1;
+% temporary approximation for liinear claibration
+slope = 1/2000;
+intcpt = 0;
+P = [slope intcpt];
 
 return
