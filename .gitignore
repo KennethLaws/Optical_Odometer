@@ -4,3 +4,5 @@
 .~lock.*
 AR700.txt
 Reference
+*.asv
+~*

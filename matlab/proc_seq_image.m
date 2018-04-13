@@ -2,6 +2,7 @@
 % Author            :: Kenneth Laws
 %                   :: Here Technologies
 % Creation Date     :: 10/16/2017
+% modified:         :: 4/13/2018
 %
 % Process images to determine x y shift in position
 % adds calculation of resolution in pix/m from measured frame size
@@ -9,25 +10,17 @@
 % removes use of camera height and resolution calculation (pix/m) these
 % depend on the experiment parameters and this script is more general
 % includes outlier rejection and gap filling
+%
+% Change log:
+% 4/13/18 - makes path setting a function
+%   adds a path setting for pc desktop
+%
 
 clear all;
 doplot = 0;
 
-% specify the path in the data folder, folder may contain only image files,
-% or only subfolders that contain only image files.  Subfolder names must
-% be consecutive so that they sort properly when reading files
-folderSpec = 'Drive/';  
-
-% specify the data folder
-if exist('/Volumes/M2Ext/Test_Drive_1214/')
-    imgPath = '/Volumes/M2Ext/Test_Drive_1214/';
-elseif exist('/media/earthmine/M2Ext/Test_Drive_1214/')
-    imgPath = '/media/earthmine/M2Ext/Test_Drive_1214/';
-else
-    error('Image folder not found, update image path in script');
-end
-
-imgPath = strcat(imgPath,folderSpec);
+% specify the path in the data folder
+imgPath = getImgPath;
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -47,7 +40,7 @@ y1 = 100;
 
 
 % get calibration data
-calib = test_drive_1214_calib2;
+calib = calibration;
 
 % begin processing selected data set
 step = 0;       % keep track of image step
@@ -59,12 +52,15 @@ while 1
     if done, break; end
     
     %debugging test
-    if step == 291
-        disp stop;
-    end
+%     if step == 291
+%         disp stop;
+%     end
     
     % load in the images
     [image_1, image_2] = load_images(fnames);
+    
+    % get image time stamp
+    imageTime = image_time(fnames{2});
     
     % process image pair
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
