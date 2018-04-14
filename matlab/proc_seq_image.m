@@ -20,7 +20,7 @@ clear all;
 doplot = 0;
 
 % specify the path in the data folder
-imgPath = getImgPath;
+[imgPath rngFndrPath gpsPath] = getImgPath;
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -37,13 +37,8 @@ h = 128;    % height of subframe
 x1 = (imageRes(2) - w)/2;
 y1 = 100;
 
-
-
-% get calibration data
-calib = calibration;
-
 % read in the range finder data
-
+[rngTime, rng, errCnt] = read_rngfndr(rngFndrPath);
 
 % begin processing selected data set
 step = 0;       % keep track of image step
@@ -63,7 +58,7 @@ while 1
     [image_1, image_2] = load_images(fnames);
     
     % get image time stamp
-    imageTime = image_time(fnames{2});
+    imageTime = image_time(fnames);
     
     % process image pair
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
@@ -75,13 +70,8 @@ while 1
     % compute shift
     deltPosPix = [ypeak-y1,xpeak-x1];
     
-    % transfor to caibrated measure of translation (m)
-    %deltY = compDY(y1,ypeak,calib);
-    %deltY = deltY * 2.67/2.59;
-    %deltX = compDY(x1,xpeak,calib);
-    %deltX = deltX * 2.67/2.59;
-    %deltPosPix = [72 35]  % debug test
-    deltPosMeters = compShift(deltPosPix,calib);
+    % convert to caibrated measure of translation (m)
+    deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 
     % generate plots and outputs
     if doplot

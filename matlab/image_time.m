@@ -15,9 +15,13 @@ function imageTime = image_time(fname)
 % change log:
 %
 
-idx = strfind(fname,'.');
-
-imageTime = str2double(fname(idx-13:idx));
+imageTime = [];
+s = fname{1};
+idx = strfind(s,'.');
+imageTime(1) = str2double(s(idx-13:idx))/1000;     % convert from usec to ms
+s = fname{2};
+idx = strfind(s,'.');
+imageTime(2) = str2double(s(idx-13:idx))/1000;     % convert from usec to ms
 
 return
 
