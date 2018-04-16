@@ -23,7 +23,7 @@ if exist('/Volumes/M2Ext/')
     rngFndrPath = [rootFld rngfndrFile];
     gpsPath = [rootFld gpsFile];
 elseif exist('/media/kip/M2Ext/')
-    rootFld = '/media/kip/M2Ext/Test_Drive_1214/';
+    rootFld = '/media/kip/M2Ext/';
     imgPath = [rootFld imgFld];
     rngFndrPath = [rootFld rngfndrFile];
     gpsPath = [rootFld gpsFile];
