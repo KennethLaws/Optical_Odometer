@@ -42,6 +42,7 @@ y1 = 100;
 
 % begin processing selected data set
 step = 0;       % keep track of image step
+nReject = 0;
 while 1
     step = step + 1;
 
@@ -66,7 +67,8 @@ while 1
     
     % bad data rejection
     [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,ambgRatio] = data_reject(c,ypeak,xpeak, max_c,yPix,xPix,image_1,image_2,x1,y1,h,w); 
-
+    nReject = nReject + reject;
+    
     % compute shift
     deltPosPix = [ypeak-y1,xpeak-x1];
     
@@ -110,16 +112,17 @@ while 1
     %fprintf('Camera = %s\n',camera);
     %fprintf('installed lens = %s\n', lens);
     fprintf('*************************************************\n');
-    fprintf('step = %d\n',step);
+    fprintf('step = processed: %d rejected: %d\n',step,nReject);
     fprintf('file 1: %s\n',fnames{1});
     fprintf('file 2: %s\n',fnames{2});
-    fprintf('image size: %d x %d\n',size(image_1));
-    fprintf('template size: %d x %d \n',w,h);
-    fprintf('template lower left corner position: (%d, %d)\n', y1,x1);
-    fprintf('processing matrix dimensions: (%d, %d)\n',yPix,xPix);
+%     fprintf('image size: %d x %d\n',size(image_1));
+%     fprintf('template size: %d x %d \n',w,h);
+%     fprintf('template lower left corner position: (%d, %d)\n', y1,x1);
+%     fprintf('processing matrix dimensions: (%d, %d)\n',yPix,xPix);
     fprintf('retrieved position: (%d, %d)\n',xpeak,ypeak);
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
     fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltPosMeters);
+    fprintf('retrieved speed: dy = %0.2f m, dx = %0.2f m/s\n',deltPosMeters*156);
     %fprintf('reading files took %0.3E sec\n',et1);
     %fprintf('analysis took %0.3E sec\n',et);
 
@@ -143,8 +146,8 @@ end
 % fill gaps created by data rejection
 
 pathName = 'data/';
-rsltFile = [pathName 'seq_image_rslt_',date];
-if exist([rsltFile '.mat'])
+rsltFile = ['seq_image_rslt_' date];
+if exist([pathName rsltFile '.mat'])
     s = input('result file exists, overwrite (y/n): ','s');
 else
     s = 'y';

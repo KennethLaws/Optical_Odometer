@@ -13,7 +13,7 @@ function[imgPath rngFndrPath gpsPath] = getImgPath
 % 04/11/2018 - changed path definition structure, modify to return gps and
 % rangefinder paths as well
 
-imgFld = 'Test_Drive_041018/images/';
+imgFld = 'Test_Drive_041018/images_partial/';
 rngfndrFile = 'Test_Drive_041018/rangefinder/';
 gpsFile = 'Test_Drive_041018/gps/';
 % specify the data location
