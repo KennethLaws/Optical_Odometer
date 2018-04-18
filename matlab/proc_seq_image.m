@@ -153,7 +153,7 @@ else
     s = 'y';
 end
 if s == 'y'
-    save(rsltFile, 'rslt');
+    save([pathName rsltFile], 'rslt');
 end
 
 % check the results

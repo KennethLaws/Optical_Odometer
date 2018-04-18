@@ -26,11 +26,10 @@ x1 = (imageRes(2) - w)/2;
 y1 = 100;
 
 % set the path to the image folder
-imgPath = getImgPath;
+[imgPath rngFndrPath gpsPath] = getImgPath;
 
-
-% get calibration data
-calib = calibration;
+% read in the range finder data
+[rngTime, rng, errCnt] = read_rngfndr(rngFndrPath);
 
 disp 'Check sequential images'
 step = input('Enter starting step number: ');
@@ -46,6 +45,9 @@ while 1
     % load in the images
     [image_1, image_2] = load_images(fnames);
         
+    % get image time stamp
+    imageTime = image_time(fnames);
+
     % process image pair
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
     [ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,image_1,x1,y1,h,w);
@@ -64,8 +66,11 @@ while 1
     %deltX = compDY(x1,xpeak,calib);
     %deltX = deltX * 2.67/2.59;
     %deltPosPix = [72 35]  % debug test
-    deltPosMeters = compShift(deltPosPix,calib);
-    
+
+    % convert to caibrated measure of translation (m)
+    deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
+
+
     % generate plots and outputs
     if doplot
         

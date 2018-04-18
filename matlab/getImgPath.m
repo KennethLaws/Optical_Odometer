@@ -13,9 +13,12 @@ function[imgPath rngFndrPath gpsPath] = getImgPath
 % 04/11/2018 - changed path definition structure, modify to return gps and
 % rangefinder paths as well
 
-imgFld = 'Test_Drive_041018/images_partial/';
-rngfndrFile = 'Test_Drive_041018/rangefinder/';
-gpsFile = 'Test_Drive_041018/gps/';
+imgFld = 'Test_Drive_041718/partial/';
+%imgFld = 'images/';
+rngfndrFile = 'Test_Drive_041718/rangefinder/';
+%rngfndrFile = 'rangefinder/';
+% gpsFile = 'Test_Drive_041018/gps/';
+gpsFile = 'gps/';
 % specify the data location
 if exist('/Volumes/M2Ext/')
     rootFld = '/Volumes/M2Ext/';
@@ -24,6 +27,8 @@ if exist('/Volumes/M2Ext/')
     gpsPath = [rootFld gpsFile];
 elseif exist('/media/kip/M2Ext/')
     rootFld = '/media/kip/M2Ext/';
+% elseif exist('/media/kip/960Pro/')
+%     rootFld = '/media/kip/960Pro/';
     imgPath = [rootFld imgFld];
     rngFndrPath = [rootFld rngfndrFile];
     gpsPath = [rootFld gpsFile];
