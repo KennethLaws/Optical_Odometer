@@ -5,7 +5,7 @@ function plot_seqImg_rslt(fname)
 
 dataPath = 'data/';
 if nargin == 0
-    fname = 'seq_image_rslt_17-Apr-2018.mat';
+    fname = 'seq_image_rslt_18-Apr-2018.mat';
 end
 
 % set name to save or read filtered data set

@@ -40,6 +40,7 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,rat
     TOP = 1;
     EDGE = 2;
     BOTTOM = 3;
+    expsrMin = 12;
     
     % set rejection codes
 %     TOP = 1;        % target at top
@@ -62,6 +63,15 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,rat
     % check black
     fracBlk = length(template(template<blk))/n;
     if fracBlk > blkLim
+        reject = 1;
+        BLK = 1;
+    else
+        BLK = 0;
+    end
+    
+    % check underexposed, for now use the same code as black to flag
+    expsr = mean(template);
+    if expsr < expsrMin
         reject = 1;
         BLK = 1;
     else
