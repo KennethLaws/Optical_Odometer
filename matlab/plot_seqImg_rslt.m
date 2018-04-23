@@ -5,7 +5,7 @@ function plot_seqImg_rslt(fname)
 
 dataPath = 'data/';
 if nargin == 0
-    fname = 'seq_image_rslt_05-Feb-2018.mat';
+    fname = 'seq_image_rslt_18-Apr-2018.mat';
 end
 
 % set name to save or read filtered data set
@@ -183,12 +183,12 @@ title(fname, 'Interpreter', 'none' )
 % ylabel('reject codes');
 % xlabel('Image Number')
 
-% figure(7), clf, hold on
-% plot(rslt(:,1),rslt(:,10),'b.')
-% plot(rslt(rslt(:,6) == 1,1),rslt(rslt(:,6) == 1,10),'r.')
-% ylabel('reject codes');
-% xlabel('Image Number')
-% title('Normalized Difference')
+figure(8), clf, hold on
+plot(rslt(:,1),rslt(:,6),'b.')
+plot(rslt(rslt(:,6) == 1,1),rslt(rslt(:,6) == 1,6),'r.')
+ylabel('reject codes');
+xlabel('Image Number')
+title('Data Rejected')
 
 
 

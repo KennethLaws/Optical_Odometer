@@ -1,4 +1,8 @@
-% plot_seqImg_rslt
+% Project           :: Optical Odometer
+% Author            :: Kenneth Laws
+%                   :: Here Technologies
+% Creation Date     :: 10/16/2017
+%
 % load in result data saved by proc_seq_image and make some plots
 % used for calibration and validation for data set 12/14/17
 

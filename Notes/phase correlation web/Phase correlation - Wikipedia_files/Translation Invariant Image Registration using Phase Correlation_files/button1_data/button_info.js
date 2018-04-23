@@ -1,1 +1,0 @@
-/**/buttonEmbed.parseSubmission({"kind": "Listing", "data": {"modhash": "", "whitelist_status": "all_ads", "children": [], "after": null, "before": null}})

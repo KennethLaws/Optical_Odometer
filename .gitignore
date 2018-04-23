@@ -3,4 +3,8 @@
 .DS_Store
 .~lock.*
 AR700.txt
-
+Reference
+*.asv
+~*
+grabframes
+*.o

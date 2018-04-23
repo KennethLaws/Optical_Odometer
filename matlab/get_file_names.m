@@ -1,9 +1,15 @@
+function [imgFold, fnames, doneflag] = get_file_names(imgPath,step)
+% Project           :: Optical Odometer
+% Author            :: Kenneth Laws
+%                   :: Here Technologies
+% Creation Date     :: 01/05/2017
+% Modified          :: 04/11/2018
+% 
 % read in a list of folder names containing the image data files
 % select consecutive image files to return.  Set flag when done
+% Change Log:
+% 04/11/18 changed number fo files per folder estimate
 
-function [imgFold, fnames, doneflag] = get_file_names(imgPath,step)
-
-    
 persistent fileNum;
 persistent fileNames;
 persistent nFiles;
@@ -13,9 +19,10 @@ persistent foldNum;
 persistent subFold;
 persistent nSubfolders;
 
-
+% if given a step number, find the folder number containing that image pair
+% step (this is a bit a buggy must fix if needed)
 if nargin >1
-    filesPerFolder = 1562;
+    filesPerFolder = 156;
     fileNum = mod(step,filesPerFolder);
     if fileNum == 0, fileNum = filesPerFolder; end
     foldNum = ceil(step/filesPerFolder)+2;

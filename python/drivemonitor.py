@@ -10,14 +10,8 @@ from multiprocessing import Process
 from sensor_interface import AR700
 from sensor_interface import spanCPT6
 
-runTime = 600				# runt time in seconds
 
-"""
- start the camera
-"""
-print("launching frame grabber")
-proc = ['../cprog/src/grabframes', str(runTime)]
-subprocess.Popen(proc)
+runTime = 600						# runt time in seconds
 
 """
 start the gps
@@ -46,6 +40,11 @@ print "starting rangefinder logging, %d seconds" % runTime
 rnglogging = Process(target=rngSnsr.read_nsec, args=(runTime, ) )
 rnglogging.start()
 
+
+# start the camera
+print("launching frame grabber")
+proc = ['../cprog/src/grabframes', '600']
+subprocess.Popen(proc)
 
 # wait for threads to complete, threads will not continue if main exits
 gpslogging.join()

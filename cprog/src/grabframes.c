@@ -336,7 +336,7 @@ int main(int argc, char *argv[])
         time(&now);
         time_info = localtime(&now);
         strftime(dirName, DIRLEN, "/media/kip/960Pro/images/%Y%m%d%H%M%S", time_info);
-        // printf("checking folder: %s \n",dirName);
+
         if (stat(dirName, &st) == -1) {
             //printf("creating folder\n");
             mkdir(dirName, 0700);
@@ -389,14 +389,12 @@ int main(int argc, char *argv[])
                 break;
             }
 
-            nImg++;
 
             /* Get the buffer index from the context information. */
             bufferIndex = (size_t) grabResult.Context;
 
             /* Check to see if the image was grabbed successfully. */
-            if ( grabResult.Status == Grabbed )
-            {
+            if ( grabResult.Status == Grabbed ){
                 /*  Success. Perform image processing. Since we passed more than one buffer
                 to the stream grabber, the remaining buffers are filled while
                 we do the image processing. The processed buffer won't be touched by
@@ -436,13 +434,13 @@ int main(int argc, char *argv[])
             /* Once finished with the processing, requeue the buffer to be filled again. */
             res = PylonStreamGrabberQueueBuffer( hGrabber, grabResult.hBuffer, (void*) bufferIndex );
             CHECK(res);
-
-
-                    fclose (fp);
+            fclose (fp);
         }
         else{
             printf("Failed to open output file\n");
         }
+        // increment step number
+        nImg++;
     }
 
     gettimeofday(&end, NULL);

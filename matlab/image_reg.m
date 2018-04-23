@@ -35,9 +35,23 @@ c(1:nBlank,:) = 0;
 c(:,1:nBlank) = 0;
 c(:,(xPix-w-nBlank):end) = 0;
 
-% normalize 
+
+% normalize variation of mean || to vehicle motion
+meanRows = mean(c');
+MeanRows = repmat(meanRows,1200,1);
+MeanRows = MeanRows';
+c = c-MeanRows;
+
+% normalize variation of mean perp to vehicle motion
+meanRows = mean(c);
+MeanRows = repmat(meanRows,1920,1);
+c = c-MeanRows;
+
+% normalize (0 - 1)
 c = c - min(c(:));
 c = c/max(c(:));
+
+
 
 
 % find peak correlation
