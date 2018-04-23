@@ -1,4 +1,10 @@
-% script to compare image processed vehicle distance data with gps
+% Project           :: Optical Odometer
+% Author            :: Kenneth Laws
+%                   :: Here Technologies
+% Creation Date     :: 10/16/2017
+% Modified          :: 
+%
+% Evaluates a comparison between gps and image derives distance travelled
 
 clear all
 
