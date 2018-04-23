@@ -40,6 +40,9 @@ y1 = 100;
 % read in the range finder data
 [rngTime, rng, errCnt] = read_rngfndr(rngFndrPath);
 
+% save a copy of rangefinder data
+save 'data/rangeData' 'rngTime' 'rng' 'errCnt';
+
 % begin processing selected data set
 step = 0;       % keep track of image step
 nReject = 0;
@@ -153,7 +156,7 @@ else
     s = 'y';
 end
 if s == 'y'
-    save([pathName rsltFile], 'rslt');
+    save([pathName rsltFile], 'rslt', 'imageTime');
 end
 
 % check the results

@@ -4,17 +4,17 @@ clear all
 
 % load in the raw sequential image processed data
 dataPath = 'data/';
-fname = 'seq_image_rslt_05-Feb-2018.mat';
+fname = 'seq_image_rslt_Test_Drive_041718.mat';
 load([dataPath fname]);
 
-s = input('apply a calibration shift? (y/n): ','s');
-if s == 'y'
-    disp 'applying clalibration shift'
-    calshift = 1.1;
-else
-    disp 'using standard calibration'
-    calshift = 1;
-end
+% s = input('apply a calibration shift? (y/n): ','s');
+% if s == 'y'
+%     disp 'applying clalibration shift'
+%     calshift = 1.1;
+% else
+%     disp 'using standard calibration'
+%     calshift = 1;
+% end
 
 % load in saved, gap filled image processed data 
 % see: proc_seq_image.m
@@ -22,13 +22,17 @@ end
 gapFillName = [dataPath 'gapFill_',fname];
 load(gapFillName,'vehSpd', 'vehDy');
 
+% load the range finder data
+load 'data/rangeData.mat';
+
 % set time step and image number arrays
 timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 imgNum = rslt(:,1)' - 1;
-imgTime = imgNum*timeStep;
 
-% apply extra calibration shift
-vehDy = calshift*vehDy;
+% convert to caibrated measure of translation (m)
+deltPosPix = rslt(2:3,:);
+
+deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 
 % compute accumulated distance travelled
 totalDy = zeros(size(vehDy));
