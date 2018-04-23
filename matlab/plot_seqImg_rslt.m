@@ -5,7 +5,7 @@ function plot_seqImg_rslt(fname)
 
 dataPath = 'data/';
 if nargin == 0
-    fname = 'seq_image_rslt_18-Apr-2018.mat';
+    fname = 'seq_image_rslt_Test_Drive_041718.mat';
 end
 
 % set name to save or read filtered data set
@@ -27,11 +27,13 @@ imgNum = rslt(:,1)' - 1;
 
 dataGaps = imgNum(rslt(:,6) == 1);
 
-figure(4), clf
-plot(rslt(:,1),vehSpd)
+figure(4), clf, hold on
 ylabel('Vehicle Speed (m/s)');
 xlabel('Image Number')
 title(fname, 'Interpreter', 'none' ) 
+plot(rslt(:,1),vehSpd)
+plot(rslt(rslt(:,6) == 1,1),vehSpd(rslt(:,6) == 1),'r.')
+
 
 figure(5), clf
 plot(rslt(:,1),rslt(:,7))

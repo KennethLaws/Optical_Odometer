@@ -20,7 +20,7 @@ clear all;
 doplot = 0;
 
 % specify the path in the data folder
-[imgPath rngFndrPath gpsPath] = getImgPath;
+[imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
 
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
@@ -146,7 +146,7 @@ end
 % fill gaps created by data rejection
 
 pathName = 'data/';
-rsltFile = ['seq_image_rslt_' date];
+rsltFile = ['seq_image_rslt_' dataSetID];
 if exist([pathName rsltFile '.mat'])
     s = input('result file exists, overwrite (y/n): ','s');
 else

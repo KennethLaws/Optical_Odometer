@@ -1,4 +1,4 @@
-function[imgPath rngFndrPath gpsPath] = getImgPath
+function[imgPath rngFndrPath gpsPath dataSetID] = getImgPath
 % Project           :: Optical Odometer
 % Author            :: Kenneth Laws
 %                   :: Here Technologies
@@ -13,7 +13,8 @@ function[imgPath rngFndrPath gpsPath] = getImgPath
 % 04/11/2018 - changed path definition structure, modify to return gps and
 % rangefinder paths as well
 
-imgFld = 'Test_Drive_041718/partial/';
+dataSetID = 'Test_Drive_041718';
+imgFld = [dataSetID '/partial/'];
 %imgFld = 'images/';
 rngfndrFile = 'Test_Drive_041718/rangefinder/';
 %rngfndrFile = 'rangefinder/';
