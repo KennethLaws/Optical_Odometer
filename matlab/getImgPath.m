@@ -19,7 +19,7 @@ imgFld = [dataSetID '/partial/'];
 rngfndrFile = 'Test_Drive_041718/rangefinder/';
 %rngfndrFile = 'rangefinder/';
 % gpsFile = 'Test_Drive_041018/gps/';
-gpsFile = 'gps/';
+gpsFile = 'Test_Drive_041718/gps/';
 % specify the data location
 if exist('/Volumes/M2Ext/')
     rootFld = '/Volumes/M2Ext/';

@@ -1,4 +1,4 @@
-function [rngTime, rng, errCnt] = read_rngfndr(rngfndrPath)
+function [rngTime, rng, errCnt] = read_rngfndr(runId,rngFndrPath)
 %
 % Project:      ::     Optical odometer
 % Author        ::     Kenneth Laws
@@ -19,12 +19,13 @@ function [rngTime, rng, errCnt] = read_rngfndr(rngfndrPath)
 %     end
 % end
 
-if exist([rngfndrPath 'AR700.mat'])
-    load([rngfndrPath 'AR700.mat']);
+if exist(['data/' runId '_AR700.mat'])
+    load(['data/' runId '_AR700.mat']);
 else
     
+    
     % open the file
-    fid = fopen([rngfndrPath 'AR700.txt']);
+    fid = fopen([rngFndrPath 'AR700.txt']);
     
     % read the data
     delimiter = ',';
@@ -42,7 +43,7 @@ else
     
     % sum the errors
     errCnt = sum(isnan(rng));
-    save([rngfndrPath 'AR700.mat'],'rngTime', 'rng', 'errCnt');
+    save(['data/' runId '_AR700.mat'],'rngTime', 'rng', 'errCnt');
 end
 
 return

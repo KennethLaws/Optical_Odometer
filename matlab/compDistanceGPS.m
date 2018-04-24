@@ -8,9 +8,14 @@
 
 clear all
 
-% load in the raw sequential image processed data
+% set the path to saved or partial data products
 dataPath = 'data/';
-fname = 'seq_image_rslt_Test_Drive_041718.mat';
+
+% set the indictor for the data run to process
+[imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
+
+% load in the raw sequential image processed data
+fname = ['seq_image_rslt_' dataSetID '.mat'];
 load([dataPath fname]);
 
 % s = input('apply a calibration shift? (y/n): ','s');
@@ -22,33 +27,29 @@ load([dataPath fname]);
 %     calshift = 1;
 % end
 
-% load in saved, gap filled image processed data 
-% see: proc_seq_image.m
-% see: plot_seqImage_rslt.m
-gapFillName = [dataPath 'gapFill_',fname];
-load(gapFillName,'vehSpd', 'vehDy');
+% apply data rejection and gap filling
+rslt(:,2:3) = applyDataRejection(rslt);
+
 
 % load the range finder data
-load 'data/rangeData.mat';
+[rngTime, rng, errCnt] = read_rngfndr(dataSetID,rngFndrPath);
 
 % set time step and image number arrays
-timeStep = 10/1562;     % colelcted 1562 images per 10 sec
+%timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 imgNum = rslt(:,1)' - 1;
 
 % convert to caibrated measure of translation (m)
 deltPosPix = rslt(2:3,:);
-
 deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 
-% compute accumulated distance travelled
-totalDy = zeros(size(vehDy));
-for j = 2:length(vehDy)
-    totalDy(j) = totalDy(j-1) + vehDy(j-1);
-end
+% % compute accumulated distance travelled
+% totalDy = zeros(size(vehDy));
+% for j = 2:length(vehDy)
+%     totalDy(j) = totalDy(j-1) + vehDy(j-1);
+% end
 
 % load the gps data
-gpsFile = [dataPath 'cartest12_14_10_11_58'];
-[yaw, gps_xyz] = readGpsImu_stream(gpsFile);
+[yaw, gps_xyz] = readGpsImu_span(dataSetID,gpsPath);
 
 
 % there are problems with this data, remove points that are between gps
