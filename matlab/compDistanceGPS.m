@@ -14,6 +14,7 @@ dataPath = 'data/';
 % set the indictor for the data run to process
 [imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
 
+
 % load in the raw sequential image processed data
 fname = ['seq_image_rslt_' dataSetID '.mat'];
 load([dataPath fname]);
@@ -27,8 +28,11 @@ load([dataPath fname]);
 %     calshift = 1;
 % end
 
-% apply data rejection and gap filling
-rslt(:,2:3) = applyDataRejection(rslt);
+% load corrected data rejection/gap filling algorithm
+% to create new data rejection file, see plot_seqImg_rslt.m
+correctedDataFile = ['seq_image_rslt_' dataSetID '_filtrd.mat'];
+load([dataPath correctedDataFile ],'adjTranslt');
+rslt(:,2:3) = adjTranslt;
 
 
 % load the range finder data
@@ -111,9 +115,17 @@ for timeIdx = 1:length(gpsTm)
 end
 
 
+%L = length(
 figure(3), clf, hold on;
 plot(gpsTm,gpsDl)
 plot(gpsTm,optIntDl,'r')
+xlim([0 258])
+
+% compute the optical error in vehicle shift compared to the gps vehicle
+% shift, this neglects pitch angle and turning effect
+optErr = mean(optIntDl - gpsDl, 'omitnan' );
+
+fprintf('optical error, mean = %0.4f\n',optErr)
 % 
 % % trim gps data to match image data time
 % p1 = 80;
