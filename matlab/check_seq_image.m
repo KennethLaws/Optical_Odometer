@@ -26,13 +26,17 @@ x1 = (imageRes(2) - w)/2;
 y1 = 100;
 
 % set the path to the image folder
-[imgPath rngFndrPath gpsPath] = getImgPath;
+[imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
+
 
 % read in the range finder data
-[rngTime, rng, errCnt] = read_rngfndr(rngFndrPath);
+[rngTime, rng, errCnt] = read_rngfndr(dataSetID, rngFndrPath);
+
+
 
 disp 'Check sequential images'
 step = input('Enter starting step number: ');
+if isempty(step), step = 1, end
 
 while 1
 

@@ -38,7 +38,7 @@ x1 = (imageRes(2) - w)/2;
 y1 = 100;
 
 % read in the range finder data
-[rngTime, rng, errCnt] = read_rngfndr(rngFndrPath);
+[rngTime, rng, errCnt] = read_rngfndr(dataSetID, rngFndrPath);
 
 % save a copy of rangefinder data
 save 'data/rangeData' 'rngTime' 'rng' 'errCnt';
@@ -46,6 +46,10 @@ save 'data/rangeData' 'rngTime' 'rng' 'errCnt';
 % begin processing selected data set
 step = 0;       % keep track of image step
 nReject = 0;
+
+rslt = [];
+imageTime = [];
+
 while 1
     step = step + 1;
 
@@ -62,7 +66,7 @@ while 1
     [image_1, image_2] = load_images(fnames);
     
     % get image time stamp
-    imageTime = image_time(fnames);
+    fileTime = image_time(fnames);
     
     % process image pair
     %[ypeak, xpeak, c, max_c] = image_reg(yPix,xPix,image_2,subFrame1);
@@ -76,7 +80,7 @@ while 1
     deltPosPix = [ypeak-y1,xpeak-x1];
     
     % convert to caibrated measure of translation (m)
-    deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
+    deltPosMeters = compShift(deltPosPix,fileTime,rngTime,rng);
 
     % generate plots and outputs
     if doplot
@@ -144,6 +148,7 @@ while 1
     fprintf('\n');
 
     rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,ambgRatio];
+    imageTime(step,:) = fileTime;
 end
 
 % fill gaps created by data rejection

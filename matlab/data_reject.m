@@ -98,15 +98,21 @@ function [reject,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,rat
     edgeLim = 0;
     
     % process ambiguity snr rejection
-    minAmbgRat = 1.5;   % minimum limit ratio over next ambiguity
-    peakRegion = 4;     % estimate of peak radius, don't look for ambiguities within this radius
+    minAmbgRat = 1.3;   % minimum limit ratio over next ambiguity
+    peakRad = 4;     % estimate of peak radius, don't look for ambiguities within this radius
     if max_c == 1       % since c is normalized, if max != 1 there was no peak
 
         % clear the region around the solution peak
         [ypeak, xpeak] = find(c == max(c(:)));
         ypeak = ypeak(1);
         xpeak = xpeak(1);
-        c(ypeak-peakRegion:ypeak+peakRegion,xpeak-peakRegion:xpeak+peakRegion) = 0;
+        peakRegion1 = ypeak-peakRad:ypeak+peakRad;
+        peakRegion2 = xpeak-peakRad:xpeak+peakRad;
+        peakRegion1(peakRegion1 < 1) = 1;
+        peakRegion1(peakRegion1 > size(c,1)) = size(c,1);
+        peakRegion2(peakRegion2 < 1) = 1;
+        peakRegion2(peakRegion2 > size(c,2)) = size(c,2);
+        c(peakRegion1,peakRegion2) = 0;
 
     %     figure(10)
     %     pcolor(c(ypeak-20:ypeak+20,xpeak-20:xpeak+20))
