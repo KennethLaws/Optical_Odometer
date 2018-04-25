@@ -51,11 +51,10 @@ plot(rslt(:,1),rslt(:,7))
 ylabel('SNR (dB)');
 xlabel('Image Number')
 
-adjTranslt = applyDataRejection(rslt);
 
 % either load corrected data or apply data rejection/gap filling algorithm
 % to produce corrected data file
-if exist([dataPath gapFillName])
+if exist([dataPath correctedDataFile])
     s = input('Use existing filtered data file? (Y/n)','s');
     if s == 'n'
         disp 'computing gap filling filter data' 
@@ -69,7 +68,8 @@ else
 end
 
 if compFilt == 1
-    correct_data;
+    adjTranslt = applyDataRejection(rslt);
+
 %     % add a new bad data filter to test
 %     
 % %     % find data with low snr over ambiguities
@@ -81,10 +81,11 @@ if compFilt == 1
 %     % fill gaps
 %     % sweep through data range fitting data where there are gaps avoiding
 %     % extrapolation
+    save([dataPath correctedDataFile ], 'adjTranslt');
  end
 
 
-% load([dataPath gapFillName],'vehSpd', 'vehDy');
+load([dataPath correctedDataFile ],'adjTranslt');
 
 %total_Y = sum(rslt(rng,4));
 % total_Y = sum(vehDy);

@@ -8,12 +8,15 @@ function adjTranslt = applyDataRejection(rslt)
 % fills the gaps created by bad data rejection
 %
 
+% set maximum fraction of gaps in section to try and fill
+maxGaps = 0.2; % max fraction
+
 % apply bad data rejection
 % set the rejected point dx and dy to NaN
 rslt(rslt(:,6) == 1,2:3) = NaN;
 
-dl = rslt(:,2);    % dy values (parallel to vehicle axis)
-d2 = rslt(:,3);    % dx value perp to vehicle
+dl = rslt(:,2);    % dy values (parallel to vehicle axis) pixels
+d2 = rslt(:,3);    % dx value perp to vehicle pixels
 
 adjTranslt = zeros(size(rslt(:,2:3)));
 
@@ -37,12 +40,16 @@ for idx = 2:3
     gapPnts = find(isnan(dl(fillPnts)));
     fitDl = dl(fitPnts);
     if ~isempty(gapPnts)
-        x = fitPnts(~isnan(fitDl));
-        y = fitDl(~isnan(fitDl))';
-        p = polyfit(x,y,2);
-        y = polyval(p,x);
         gaps = fillPnts(gapPnts);
-        dl(gaps) = polyval(p,gaps);
+        if length(gapPnts)/length(fillPnts) > maxGaps
+            dl(gaps) = NaN;
+        else
+            x = fitPnts(~isnan(fitDl));
+            y = fitDl(~isnan(fitDl))';
+            p = polyfit(x,y,2);
+            y = polyval(p,x);
+            dl(gaps) = polyval(p,gaps);
+        end
     end
     
     
@@ -55,12 +62,16 @@ for idx = 2:3
         fitDl = dl(fitPnts);
         gapPnts = find(isnan(dl(fillPnts)));
         if ~isempty(gapPnts)
-            x = fitPnts(~isnan(fitDl));
-            y = fitDl(~isnan(fitDl))';
-            p = polyfit(x,y,2);
-            y = polyval(p,x);
             gaps = fillPnts(gapPnts);
-            dl(gaps) = polyval(p,gaps);
+            if length(gapPnts)/length(fillPnts) > maxGaps
+                dl(gaps) = NaN;
+            else
+                x = fitPnts(~isnan(fitDl));
+                y = fitDl(~isnan(fitDl))';
+                p = polyfit(x,y,2);
+                y = polyval(p,x);
+                dl(gaps) = polyval(p,gaps);
+            end
         end
         startSpan = startSpan + fitRng;
     end
@@ -72,12 +83,16 @@ for idx = 2:3
     fitDl = dl(fitPnts);
     gapPnts = find(isnan(dl(fillPnts)));
     if ~isempty(gapPnts)
-        x = fitPnts(~isnan(fitDl));
-        y = fitDl(~isnan(fitDl))';
-        p = polyfit(x,y,2);
-        y = polyval(p,x);
         gaps = fillPnts(gapPnts);
-        dl(gaps) = polyval(p,gaps);
+        if length(gapPnts)/length(fillPnts) > maxGaps
+            dl(gaps) = NaN;
+        else
+            x = fitPnts(~isnan(fitDl));
+            y = fitDl(~isnan(fitDl))';
+            p = polyfit(x,y,2);
+            y = polyval(p,x);
+            dl(gaps) = polyval(p,gaps);
+        end
     end
     
     adjTranslt(:,idx-1) = dl;
