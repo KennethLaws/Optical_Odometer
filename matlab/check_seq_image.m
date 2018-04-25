@@ -36,7 +36,7 @@ y1 = 100;
 
 disp 'Check sequential images'
 step = input('Enter starting step number: ');
-if isempty(step), step = 1, end
+if isempty(step), step = 1; end
 
 while 1
 

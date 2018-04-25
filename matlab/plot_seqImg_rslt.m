@@ -16,14 +16,14 @@ function plot_seqImg_rslt(fname)
 
 dataPath = 'data/';
 if nargin == 0
-    fname = 'seq_image_rslt_Test_Drive_041718.mat';
+    fname = 'seq_image_rslt_Test_Drive_041718';
 end
 
 % set name to save or read filtered data set
-gapFillName = ['gapFill_',fname];
+correctedDataFile = [fname '_filtrd.mat'];
 
 % load in the raw sequential image processed data
-load([dataPath fname]);
+load([dataPath fname '.mat']);
 
 % % start and end image by image number
 % img_start = 0;
@@ -53,25 +53,23 @@ xlabel('Image Number')
 
 adjTranslt = applyDataRejection(rslt);
 
-% either load filtered data or filter the raw data to reject bad points and
-% fill with interpolated data points
+% either load corrected data or apply data rejection/gap filling algorithm
+% to produce corrected data file
+if exist([dataPath gapFillName])
+    s = input('Use existing filtered data file? (Y/n)','s');
+    if s == 'n'
+        disp 'computing gap filling filter data' 
+        compFilt = 1;
+    else
+        disp 'using existing gap filling filter data'
+        compFilt = 0;
+    end
+else
+    compFilt = 1;
+end
 
-
-% if exist([dataPath gapFillName])
-%     s = input('Use existing filtered data file? (Y/n)','s');
-%     if s == 'n'
-%         disp 'computing gap filling filter data' 
-%         compFilt = 1;
-%     else
-%         disp 'using existing gap filling filter data'
-%         compFilt = 0;
-%     end
-% else
-%     compFilt = 1;
-% end
-% 
-% if compFilt == 1
-%     gapFill;
+if compFilt == 1
+    correct_data;
 %     % add a new bad data filter to test
 %     
 % %     % find data with low snr over ambiguities
@@ -83,7 +81,7 @@ adjTranslt = applyDataRejection(rslt);
 %     % fill gaps
 %     % sweep through data range fitting data where there are gaps avoiding
 %     % extrapolation
-% end
+ end
 
 
 % load([dataPath gapFillName],'vehSpd', 'vehDy');
