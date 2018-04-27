@@ -15,10 +15,11 @@ function metersPerPix = calibration(d)
 % m/pix = R*sin(theta/2) / nPix/2
 
 % temporary approximation for linear calibration
-lensAngle = [70.6 48];     % viewing angle in degrees https://www.baslerweb.com/en/products/tools/lens-selector/
+emprclCalFctr = 1.45;      % empirical calibration factor derived from training data
+lensAngle = [70.6 48]*emprclCalFctr;     % viewing angle in degrees https://www.baslerweb.com/en/products/tools/lens-selector/
 cameraRes = [1920 1200];    % camera resolution
 
-ofstt = 3.9;      % offset between camera effective height and rangefinder height
+ofstt = 0;      % offset between camera effective height and rangefinder height
 H = (8 + ofstt) * 2.54;   % standoff of the rangefinder, depends on model (inches converted to cm)
 R = (H + d) / 100;  % distance from camera to ground (m)
 theta = lensAngle * pi/180;     %
