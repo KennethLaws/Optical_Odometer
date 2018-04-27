@@ -26,7 +26,7 @@ theta = lensAngle * pi/180;     %
 metersPerPix = (R * theta)./cameraRes;
 
 % for now, just return one resolution
-% he horizontal and vertical should be the same but are not quite  
+% the horizontal and vertical should be the same but are not quite  
 
 metersPerPix = metersPerPix(1);
 
