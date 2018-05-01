@@ -4,7 +4,7 @@
 % Creation Date     :: 10/16/2017
 % Modified          :: 
 %
-% Evaluates a comparison between gps and image derives distance travelled
+% Evaluates a comparison between gps and image derived distance travelled
 
 clear all
 
@@ -12,8 +12,10 @@ clear all
 dataPath = 'data/';
 
 % set the indictor for the data run to process
-[imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
+%[imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
 
+% set drive data set to operate on
+dataSetID = 'Test_Drive_041718';
 
 % load in the raw sequential image processed data
 fname = ['seq_image_rslt_' dataSetID '.mat'];
@@ -33,7 +35,7 @@ rslt(:,2:3) = adjTranslt;
 %timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 imgNum = rslt(:,1)' - 1;
 
-% convert to caibrated measure of translation (m)
+% convert to calibrated measure of translation (m)
 deltPosPix = rslt(:,2:3);
 deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds

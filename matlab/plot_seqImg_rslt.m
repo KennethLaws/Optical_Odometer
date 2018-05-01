@@ -1,5 +1,5 @@
 
-function plot_seqImg_rslt(fname)
+function plot_seqImg_rslt(rsltFile, correctedDataFile)
 % Project           :: Optical Odometer
 % Author            :: Kenneth Laws
 %                   :: Here Technologies
@@ -17,13 +17,13 @@ function plot_seqImg_rslt(fname)
 dataPath = 'data/';
 if nargin == 0
     fname = 'seq_image_rslt_Test_Drive_041718';
+    % set name to save or read filtered data set
+    correctedDataFile = [fname '_filtrd.mat'];
 end
 
-% set name to save or read filtered data set
-correctedDataFile = [fname '_filtrd.mat'];
 
 % load in the raw sequential image processed data
-load([dataPath fname '.mat']);
+load([dataPath rsltFile '.mat']);
 
 % % start and end image by image number
 % img_start = 0;
@@ -41,7 +41,7 @@ imgNum = rslt(:,1)' - 1;
 figure(4), clf, hold on
 ylabel('Vehicle translation (pixels)');
 xlabel('Image Number')
-title(fname, 'Interpreter', 'none' ) 
+title(rsltFile, 'Interpreter', 'none' ) 
 plot(rslt(:,1),vehDy)
 plot(rslt(rslt(:,6) == 1,1),vehDy(rslt(:,6) == 1),'r.')
 
@@ -54,21 +54,21 @@ xlabel('Image Number')
 
 % either load corrected data or apply data rejection/gap filling algorithm
 % to produce corrected data file
-if exist([dataPath correctedDataFile])
-    s = input('Use existing filtered data file? (Y/n)','s');
-    if s == 'n'
-        disp 'computing gap filling filter data' 
-        compFilt = 1;
-    else
-        disp 'using existing gap filling filter data'
-        compFilt = 0;
-    end
-else
-    compFilt = 1;
-end
-
-if compFilt == 1
-    adjTranslt = applyDataRejection(rslt);
+% if exist([dataPath correctedDataFile])
+%     s = input('Use existing filtered data file? (Y/n)','s');
+%     if s == 'n'
+%         disp 'computing gap filling filter data' 
+%         compFilt = 1;
+%     else
+%         disp 'using existing gap filling filter data'
+%         compFilt = 0;
+%     end
+% else
+%     compFilt = 1;
+% end
+% 
+% if compFilt == 1
+%     adjTranslt = applyDataRejection(rslt);
 
 %     % add a new bad data filter to test
 %     
@@ -81,23 +81,23 @@ if compFilt == 1
 %     % fill gaps
 %     % sweep through data range fitting data where there are gaps avoiding
 %     % extrapolation
-    save([dataPath correctedDataFile ], 'adjTranslt');
- end
+%     save([dataPath correctedDataFile ], 'adjTranslt');
+%  end
 
 
-load([dataPath correctedDataFile ],'adjTranslt');
+load([dataPath correctedDataFile ], 'imageTime', 'transltPix');
 
 %total_Y = sum(rslt(rng,4));
 % total_Y = sum(vehDy);
 % fprintf('Total distance travelled, y = %0.2f m\n',total_Y);
 
 figure(6), clf, hold on
-plot(imgNum,adjTranslt(:,1),'b-')
-plot(imgNum,adjTranslt(:,1),'b.')
+plot(imgNum,transltPix(:,1),'b-')
+plot(imgNum,transltPix(:,1),'b.')
 idx = find(rslt(:,6) == 1);
 
 % indicate data with reject codes
-plot(imgNum(idx),adjTranslt(idx,1),'r.');
+plot(imgNum(idx),transltPix(idx,1),'r.');
 
 % compute fraction of rejected data points
 numReject = length(idx);
@@ -108,11 +108,11 @@ fprintf('fraction of data rejected = %0.2f\n',fracReject);
 % idx = find(   (rslt(:,15) > 40 | rslt(:,16) > 40) & rslt(:,17) < .5        );
 % plot(imgNum(idx),vehSpd(idx),'g.')
 
-ylabel('Vehicle Speed (m/s)');
+ylabel('Vehicle Translation (pixels)');
 xlabel('Image Number')
-title(fname, 'Interpreter', 'none' ) 
+title(rsltFile, 'Interpreter', 'none' ) 
 
-    %rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,snrAmbg];
+%rslt(step,:) = [step,deltPosPix,deltPosMeters,reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH,deltPosAmbg,snrAmbg];
 
 % figure(7), clf, hold on
 % plot(rslt(:,1),rslt(:,11),'b.')

@@ -6,17 +6,19 @@ function adjTranslt = applyDataRejection(rslt)
 % Modified          ::
 %
 % fills the gaps created by bad data rejection
-%
+% Returns an adusted array of translation data (gaps filled by
+% interpolation) units of return values are pixels
 
 % set maximum fraction of gaps in section to try and fill
-maxGaps = 0.2; % max fraction
+fitSpan = 50;  % 150 span of data to apply polynomial fit for gap filling
+maxGaps = 0.2; % max fraction of missing points over span
 
 % apply bad data rejection
 % set the rejected point dx and dy to NaN
 rslt(rslt(:,6) == 1,2:3) = NaN;
 
-dl = rslt(:,2);    % dy values (parallel to vehicle axis) pixels
-d2 = rslt(:,3);    % dx value perp to vehicle pixels
+% dl = rslt(:,2);    % dy values (parallel to vehicle axis) pixels
+% d2 = rslt(:,3);    % dx value perp to vehicle pixels
 
 adjTranslt = zeros(size(rslt(:,2:3)));
 
@@ -25,8 +27,7 @@ for idx = 2:3
     dl = rslt(:,idx);
     
     % could do simple average between adjacent points (and probably should have)
-    gapIdx = find(isnan(dl));
-    fitSpan = 50;  % 150
+    %gapIdx = find(isnan(dl));
     fitRng = floor(fitSpan/3);
     N = length(dl)/fitRng;
     N = floor(N);
