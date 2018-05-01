@@ -204,9 +204,8 @@ deltPosPix = rslt(:,2:3);
 deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds
 
-%for now, ignore the component of motion perpendicular to camera long axis
-%(long axis should be roughly parallel to axis of car
-optDl = deltPosMeters(:,1);
+% save calibrated result
+save([dataPath rsltFile '_calib.mat'], 'optTime', 'deltPosMeters');
 
 
 
