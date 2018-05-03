@@ -1,4 +1,4 @@
-function deltPosMeters = optCompShift(deltPosPix,imageTime,rngTime,rng,rngOffset,...
+function deltPosMeters = optCompShift(deltPosPix,imageTime,meanRng,rngOffset,...
     lensScalefactor)
 % Project           :: Optical Odometer
 % Author            :: Kenneth Laws
@@ -7,17 +7,15 @@ function deltPosMeters = optCompShift(deltPosPix,imageTime,rngTime,rng,rngOffset
 % Modified          :: 
 %
 
-% function to estimate the distance between two points in the image frame
+% Part of optimization routine (find_rangefinder_params.m) this function to 
+% estimate the distance between two points in the image frame in meters
 % using active calibration based on range finder data, modified to take
 % rangefinder parameters as inputs and to include the rangefinder
 % calibration
 %
 % Change Log:
-% 
+% 5/1/18 changed range input to be the mean range over each image interval
 
-% find the range offset from rangefinder data
-idx = find(rngTime >= imageTime(1) & rngTime <= imageTime(2));
-d = mean(rng(idx),'omitnan');
 
 % compute the calibration factor
 % temporary approximation for linear calibration
@@ -26,15 +24,17 @@ lensAngle = [70.6 48]*emprclCalFctr;     % viewing angle in degrees https://www.
 cameraRes = [1920 1200];    % camera resolution
 
 H = (8 + rngOffset) * 2.54;   % standoff of the rangefinder, depends on model (inches converted to cm)
-R = (H + d) / 100;  % distance from camera to ground (m)
+R = (H + meanRng) / 100;  % distance from camera to ground (m)
 theta = lensAngle * pi/180;     %
-metersPerPix = (R * theta)./cameraRes;
+
+% do the calibration based on the long image dimension only
+metersPerPix = (R * theta(1))./cameraRes(1);
 
 % for now, just return one resolution
 % the horizontal and vertical should be the same but are not quite  
-
-metersPerPix = metersPerPix(1);
-deltPosMeters = deltPosPix * metersPerPix;
+deltPosMeters = ones(size(metersPerPix));
+deltPosMeters(:,1) = deltPosPix(:,1) .* metersPerPix;
+deltPosMeters(:,2) = deltPosPix(:,2) .* metersPerPix;
 
 end
 

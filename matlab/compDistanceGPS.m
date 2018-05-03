@@ -2,9 +2,10 @@
 % Author            :: Kenneth Laws
 %                   :: Here Technologies
 % Creation Date     :: 10/16/2017
-% Modified          :: 
 %
 % Evaluates a comparison between gps and image derived distance travelled
+% Change log:
+%
 
 clear all
 
@@ -17,28 +18,34 @@ dataPath = 'data/';
 % set drive data set to operate on
 dataSetID = 'Test_Drive_041718';
 
-% load in the raw sequential image processed data
-fname = ['seq_image_rslt_' dataSetID '.mat'];
-load([dataPath fname]);
+rsltFile = ['seq_image_rslt_' dataSetID];
 
-% load corrected data rejection/gap filling algorithm
-% to create new data rejection file, see plot_seqImg_rslt.m
-correctedDataFile = ['seq_image_rslt_' dataSetID '_filtrd.mat'];
-load([dataPath correctedDataFile ],'adjTranslt');
-rslt(:,2:3) = adjTranslt;
+% % load in the raw sequential image processed data
+% fname = ['seq_image_rslt_' dataSetID '.mat'];
+% load([dataPath fname]);
+
+% % load corrected data rejection/gap filling algorithm
+% % to create new data rejection file, see plot_seqImg_rslt.m
+% correctedDataFile = ['seq_image_rslt_' dataSetID '_filtrd.mat'];
+% load([dataPath correctedDataFile ],'adjTranslt');
+% rslt(:,2:3) = adjTranslt;
 
 
 % load the range finder data
-[rngTime, rng, errCnt] = read_rngfndr(dataSetID,rngFndrPath);
+%[rngTime, rng, errCnt] = read_rngfndr(dataSetID,rngFndrPath);
+
+% load calibrated result with outlier rejection and gap filling
+load([dataPath rsltFile '_calib.mat'], 'optTime', 'deltPosMeters');
+
 
 % set time step and image number arrays
 %timeStep = 10/1562;     % colelcted 1562 images per 10 sec
-imgNum = rslt(:,1)' - 1;
+%imgNum = rslt(:,1)' - 1;
 
-% convert to calibrated measure of translation (m)
-deltPosPix = rslt(:,2:3);
-deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
-optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds
+% % convert to calibrated measure of translation (m)
+% deltPosPix = rslt(:,2:3);
+% deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
+% optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds
 
 %for now, ignore the component of motion perpendicular to camera long axis
 %(long axis should be roughly parallel to axis of car
@@ -46,7 +53,7 @@ optDl = deltPosMeters(:,1);
 
 
 % load the gps data
-[gpsSpd, gpsPos, insAtt] = readGpsImu_span(dataSetID,gpsPath);
+[gpsSpd, gpsPos, insAtt] = readGpsImu_span(dataSetID);
 gpsTime = gpsPos(:,1)';
 
 
@@ -62,10 +69,17 @@ gpsDl = sqrt(gpsDx.^2 + gpsDy.^2);  % compute horizontal translation
 
 
 % shift to align image time with gps time results
-gpsTm = gpsTm - gpsTime(1);  % reference gps time to the time of the first gps measurement
-optTime = optTime - optTime(1);
-optTimeShift = 0;
-optTime = optTime - optTimeShift;  % manually sync times
+% this time shift should be constant given the data collection methods and
+% should be moved to the script that sets the optical measurement time
+% stamps
+tShift = 1523750381.1190;   % empirically derived time difference (different pivot year)
+tAdj = 0.0;                 % empirical additional shift (by examining data)
+optTime = optTime - tShift - tAdj;
+
+t0 = gpsTime(1);    % reference time to the first gps time point
+
+gpsTm = gpsTm - t0;  % reference gps time to the time of the first gps measurement
+optTime = optTime - t0;
 
 % compute the integrated optical distance per gps time step
 lastGpsTm = 0;

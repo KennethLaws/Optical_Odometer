@@ -14,14 +14,17 @@
 % Change log:
 % 4/13/18 - makes path setting a function
 %   adds a path setting for pc desktop
-%
+% 5/1/18 - no longer try to convert translation to calibrated meters before
+% doing outlier rejection and gap filling
 
 clear all;
 doplot = 0;
 dataPath = 'data/';
 
 % specify the path in the data folder
+%[imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
 [imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
+
 
 % define a subframe (smaller than maximum)
 imageRes = [1920, 1200];
@@ -37,12 +40,6 @@ y1 = 100;
 % specify camera lens and setup
 % camera = 'BLFY-PGE-20E4C-CS';
 % lens = '8MM 1/1.8 ir mp';   % this lens has much lower distortion than previous
-
-% read in the range finder data
-[rngTime, rng, errCnt] = read_rngfndr(dataSetID, rngFndrPath);
-
-% save a copy of rangefinder data
-save 'data/rangeData' 'rngTime' 'rng' 'errCnt';
 
 % check for existing processed data file
 rsltFile = ['seq_image_rslt_' dataSetID];
@@ -89,8 +86,10 @@ if s == 'y'
         % compute shift
         deltPosPix = [ypeak-y1,xpeak-x1];
         
-        % convert to caibrated measure of translation (m)
-        deltPosMeters = compShift(deltPosPix,fileTime,rngTime,rng);
+        % put in a placeholder for calibrated measure of translation (m)
+        % actual calibrated result is computed later
+        %deltPosMeters = compShift(deltPosPix,fileTime,rngTime,rng);       
+        deltPosMeters = [0 0];
         
         % generate plots and outputs
         if doplot
@@ -200,7 +199,14 @@ plot_seqImg_rslt(rsltFile, correctedDataFile)
 
 
 % convert to calibrated measure of translation (m)
-deltPosPix = rslt(:,2:3);
+
+% read in the range finder data
+[rngTime, rng, errCnt, meanRng] = read_rngfndr(dataSetID,rngFndrPath);
+
+% use the translations with data rejection and gap filling done
+deltPosPix = transltPix;
+
+% get the calibrated translations
 deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds
 
