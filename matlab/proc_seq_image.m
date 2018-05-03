@@ -16,6 +16,7 @@
 %   adds a path setting for pc desktop
 % 5/1/18 - no longer try to convert translation to calibrated meters before
 % doing outlier rejection and gap filling
+% 5/3/18 - fixes issue with rangefinder data implementation
 
 clear all;
 doplot = 0;
@@ -197,9 +198,6 @@ load([dataPath correctedDataFile ], 'imageTime', 'transltPix');
 % check the results
 plot_seqImg_rslt(rsltFile, correctedDataFile)
 
-
-% convert to calibrated measure of translation (m)
-
 % read in the range finder data
 [rngTime, rng, errCnt, meanRng] = read_rngfndr(dataSetID,rngFndrPath);
 
@@ -207,7 +205,8 @@ plot_seqImg_rslt(rsltFile, correctedDataFile)
 deltPosPix = transltPix;
 
 % get the calibrated translations
-deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
+% convert to calibrated measure of translation (m)
+deltPosMeters = compShift(deltPosPix,imageTime,meanRng);
 optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds
 
 % save calibrated result

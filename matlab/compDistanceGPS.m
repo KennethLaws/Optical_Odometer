@@ -37,7 +37,6 @@ rsltFile = ['seq_image_rslt_' dataSetID];
 % load calibrated result with outlier rejection and gap filling
 load([dataPath rsltFile '_calib.mat'], 'optTime', 'deltPosMeters');
 
-
 % set time step and image number arrays
 %timeStep = 10/1562;     % colelcted 1562 images per 10 sec
 %imgNum = rslt(:,1)' - 1;
@@ -47,10 +46,8 @@ load([dataPath rsltFile '_calib.mat'], 'optTime', 'deltPosMeters');
 % deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 % optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds
 
-%for now, ignore the component of motion perpendicular to camera long axis
-%(long axis should be roughly parallel to axis of car
-optDl = deltPosMeters(:,1);
-
+% compute the translation distance per image pair
+optDl = sqrt(deltPosMeters(:,1).^2 + deltPosMeters(:,2).^2);
 
 % load the gps data
 [gpsSpd, gpsPos, insAtt] = readGpsImu_span(dataSetID);
@@ -61,6 +58,23 @@ gpsTime = gpsPos(:,1)';
 [gpsX gpsY gpsZ] = latlon2xyz(gpsPos);
     
 
+
+% shift to align image time with gps time results
+% this time shift should be constant given the data collection methods and
+% should be moved to the script that sets the optical measurement time
+% stamps
+% shift optical time base to match up with gps
+% tshift = gpsTime(1) - imgTime(1)  
+% this assumes that the first times in the series are exactly simultaneous
+tShift = 1523750382.11899996;   % empirically derived time difference (different pivot year)
+tAdj = -0.045;                     % empirical additional shift (by examining data)
+optTime = optTime - tShift - tAdj;
+t0 = gpsTime(1);    % reference time to the first gps time point
+gpsTime = gpsTime - t0;  % reference gps time to the time of the first gps measurement
+optTime = optTime - t0;
+
+%fprintf('time shift = %0.8f\n',gpsTime(1) - optTime(1))
+
 % compute the gps translations in x an y vs time
 gpsDx = diff(gpsX);
 gpsDy = diff(gpsY);
@@ -68,18 +82,9 @@ gpsTm = gpsTime(2:end);     % time at end of translation
 gpsDl = sqrt(gpsDx.^2 + gpsDy.^2);  % compute horizontal translation
 
 
-% shift to align image time with gps time results
-% this time shift should be constant given the data collection methods and
-% should be moved to the script that sets the optical measurement time
-% stamps
-tShift = 1523750381.1190;   % empirically derived time difference (different pivot year)
-tAdj = 0.0;                 % empirical additional shift (by examining data)
-optTime = optTime - tShift - tAdj;
 
-t0 = gpsTime(1);    % reference time to the first gps time point
 
-gpsTm = gpsTm - t0;  % reference gps time to the time of the first gps measurement
-optTime = optTime - t0;
+
 
 % compute the integrated optical distance per gps time step
 lastGpsTm = 0;
@@ -106,7 +111,7 @@ ylabel('Vehicle Translation (m)')
 % shift, this neglects pitch angle and turning effect
 optErr = optIntDl - gpsDl;
 
-fprintf('optical error, mean = %0.4f, std = %0.4f\n', ...
+fprintf('optical error, mean = %0.4f, std = %0.5f\n', ...
     mean(optErr,'omitnan'), std(optErr,'omitnan'));
 
 

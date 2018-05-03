@@ -51,6 +51,26 @@ gpsTime = gpsPos(:,1)';
 % convert gps data to horizontal position in meters + altitude
 [gpsX gpsY gpsZ] = latlon2xyz(gpsPos);
 
+
+% shift to align image time with gps time results
+% gpsTm = gpsTm - gpsTime(1);  % reference gps time to the time of the first gps measurement
+% optTime = optTime - optTime(1);
+% optTimeShift = 0;
+% optTime = optTime - optTimeShift;  % manually sync times
+
+
+% shift to align image time with gps time results
+% this time shift should be constant given the data collection methods and
+% should be moved to the script that sets the optical measurement time
+% stamps
+%fprintf('time shift = %0.8f\n',gpsTime(1) - optTime(1))
+tShift = 1523750382.11899996;   % empirically derived time difference (different pivot year)
+tAdj = -0.044;                 % -0.045 empirical additional shift (by examining data)
+optTime = optTime - tShift - tAdj;
+t0 = gpsTime(1);    % reference time to the first gps time point
+gpsTime = gpsTime - t0;  % reference gps time to the time of the first gps measurement
+optTime = optTime - t0;
+
 % compute the gps translations in x an y vs time
 gpsDx = diff(gpsX);
 gpsDy = diff(gpsY);
@@ -58,18 +78,12 @@ gpsTm = gpsTime(2:end);     % time at end of translation
 gpsDl = sqrt(gpsDx.^2 + gpsDy.^2);  % compute horizontal translation
 
 
-% shift to align image time with gps time results
-gpsTm = gpsTm - gpsTime(1);  % reference gps time to the time of the first gps measurement
-optTime = optTime - optTime(1);
-optTimeShift = 0;
-optTime = optTime - optTimeShift;  % manually sync times
-
 %-------------------------------------------------------%
 % perform an optimization to minimize squared error as a function of
 % rangefinder parameters
 cnt = 0;
-rngOffset = 0;
-lensScalefactor = 1.45;
+rngOffset = -5.97617;
+lensScalefactor = 3.57617;
 scaleShift = .2;
 offsetShift = .2;
 sumSqrErr = 100;
@@ -78,22 +92,27 @@ lowestErr = 100;
 deltPosPix = rslt(:,2:3);
 sumSqrErr = lastErr*[1 1 1 1];
 lastMinErr = min(sumSqrErr);
-s = [-1,-1;
+s = [0,0;
+    -1,-1;
+    -1,0;
     -1,1;
+    0,-1;
+    0,1;
     1,-1;
+    1,0;
     1,1];
 while 1
     
-    for jj = 1:4
+    for jj = 1:8
         ss = s(jj,:);
         
         p1 = rngOffset + offsetShift*ss(1);
         p2 = lensScalefactor + scaleShift*ss(2);
+        
         % convert to calibrated measure of translation (m)
         %deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
         deltPosMeters = optCompShift(deltPosPix,imageTime,meanRng,p1,...
             p2);
-        
         optDl = sqrt(deltPosMeters(:,1).^2 + deltPosMeters(:,2).^2);
         %optDl = deltPosMeters(:,1);
         
@@ -116,33 +135,46 @@ while 1
         
         sumSqrErr(jj) = sum(optErr.^2, 'omitnan');
     end
-    errShift = sumSqrErr - lastErr;
-    lastErr = sumSqrErr;
+    %errShift = sumSqrErr - lastErr;
+    %lastErr = sumSqrErr;
     [minErr, idx] = min(sumSqrErr);
-    if lastMinErr < minErr
-        scaleShift = scaleShift*.25;
-        offsetShift = offsetShift*.25;
-    end
-    
-    ss = s(idx,:);
-    rngOffset = rngOffset + offsetShift*ss(1);
-    lensScalefactor = lensScalefactor + scaleShift*ss(2);
+    %if lastMinErr < minErr
     
 %     if abs(minErr - lastMinErr) < .00001
 %         break;
 %     end
     lastMinErr = minErr;
     
-    if lowestErr - minErr > .0005
+    if lowestErr - minErr > .00001
+        % improvement found display results
         lowestErr = minErr;
-        fprintf('sum squared error = %0.5f\n',minErr);
+        fprintf('scale = %0.5f offset = %0.5f error = %0.5f\n',p2,p1,minErr);
         cnt = 0;
+        figure(3), clf, hold on;
+        plot(gpsTm,gpsDl)
+        plot(gpsTm,optIntDl,'r')
+        xlim([0 258])
+        xlabel('Time (sec)')
+        ylabel('Vehicle Translation (m)')
     else
+        % no significant improvement, increment termination counter
         cnt = cnt +1;
         if cnt > 10 
             break;
         end
     end
+    
+    if idx == 1
+        % none of the shifts improved result, use smaller shifts
+        scaleShift = scaleShift*.50;
+        offsetShift = offsetShift*.50;
+    else
+        % apply best shift as new solution   
+        ss = s(idx,:);
+        rngOffset = rngOffset + offsetShift*ss(1);
+        lensScalefactor = lensScalefactor + scaleShift*ss(2);
+    end
+
     
 end
 % compare results
