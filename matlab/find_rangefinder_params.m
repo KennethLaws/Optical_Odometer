@@ -82,8 +82,8 @@ gpsDl = sqrt(gpsDx.^2 + gpsDy.^2);  % compute horizontal translation
 % perform an optimization to minimize squared error as a function of
 % rangefinder parameters
 cnt = 0;
-rngOffset = -5.97617;
-lensScalefactor = 3.57617;
+rngOffset = -5.86513;
+lensScalefactor = 3.47461;
 scaleShift = .2;
 offsetShift = .2;
 sumSqrErr = 100;

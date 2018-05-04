@@ -16,6 +16,10 @@ function deltPosMeters = optCompShift(deltPosPix,imageTime,meanRng,rngOffset,...
 % Change Log:
 % 5/1/18 changed range input to be the mean range over each image interval
 
+rngFndrNotUsed = 0;
+if rngFndrNotUsed
+    meanRng = meanRng*0;
+end
 
 % compute the calibration factor
 % temporary approximation for linear calibration

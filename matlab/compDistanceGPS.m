@@ -114,4 +114,9 @@ optErr = optIntDl - gpsDl;
 fprintf('optical error, mean = %0.4f, std = %0.5f\n', ...
     mean(optErr,'omitnan'), std(optErr,'omitnan'));
 
+dgps = sum(gpsDl(~isnan(optIntDl)));
+dopt = sum(optIntDl(~isnan(optIntDl)));
+fprintf('Total translated distance: gps = %0.3f m, opt = %0.3f m\n',dgps,dopt);
+fprintf('Error in total optical translated distance = %0.4f, frac error = %0.3f %%\n',dopt-dgps,(dopt-dgps)/dgps*100)
+
 
