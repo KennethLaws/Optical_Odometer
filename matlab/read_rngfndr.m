@@ -1,4 +1,4 @@
-function [rngTime, rng, errCnt, meanRng] = read_rngfndr(runId,rngFndrPath,imageTime)
+function [rngTime, rng, errCnt, meanRng] = read_rngfndr(runId,imageTime)
 %
 % Project:      ::     Optical odometer
 % Author        ::     Kenneth Laws
@@ -29,8 +29,11 @@ function [rngTime, rng, errCnt, meanRng] = read_rngfndr(runId,rngFndrPath,imageT
 if exist(['data/' runId '_AR700.mat'])
     load(['data/' runId '_AR700.mat']);
 else
+    disp 'reading and parsing rangefinder data file'
     
-    
+    % get the path name
+    [imgPath rngFndrPath gpsPath dataSetID] = getImgPath;
+
     % open the file
     fid = fopen([rngFndrPath 'AR700.txt']);
     

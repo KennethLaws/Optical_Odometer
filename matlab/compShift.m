@@ -18,8 +18,10 @@ function deltPosMeters = compShift(deltPosPix,imageTime,meanRng)
 
 
 % compute the calibration factor
-rngOffset = -5.97617;      % offset between camera effective height and rangefinder height
-emprclCalFctr = 3.57617;      % empirical calibration factor derived from training data
+%rngOffset = -5.97617;      % offset between camera effective height and rangefinder height
+%emprclCalFctr = 3.57617;      % empirical calibration factor derived from training data
+rngOffset = -5.86680;      % offset between camera effective height and rangefinder height
+emprclCalFctr = 3.47617;      % empirical calibration factor derived from training data
 lensAngle = [70.6 48]*emprclCalFctr;     % viewing angle in degrees https://www.baslerweb.com/en/products/tools/lens-selector/
 cameraRes = [1920 1200];    % camera resolution
 

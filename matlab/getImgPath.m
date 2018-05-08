@@ -19,7 +19,7 @@ function[imgPath rngFndrPath gpsPath dataSetID] = getImgPath
 % 5/1/18 makes it easier to change paths, just have to change the dataSetID
 
 dataSetID = 'Test_Drive_041718';
-imgFld = [dataSetID '/partial/'];
+imgFld = [dataSetID '/images/'];
 %imgFld = 'images/';
 rngfndrFile = [dataSetID '/rangefinder/'];
 %rngfndrFile = 'rangefinder/';

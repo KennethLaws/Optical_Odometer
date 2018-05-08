@@ -103,7 +103,7 @@ end
 figure(3), clf, hold on;
 plot(gpsTm,gpsDl)
 plot(gpsTm,optIntDl,'r')
-xlim([0 258])
+%xlim([0 258])
 xlabel('Time (sec)')
 ylabel('Vehicle Translation (m)')
 

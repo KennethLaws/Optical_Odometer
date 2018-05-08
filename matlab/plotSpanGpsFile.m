@@ -5,14 +5,16 @@
 %
 %
 % Read and parse the GPS/IMU file
+%
+% Change log:
+% 5/7/18 function to read the gpsImu now takes dataSetID as argument
+
 clear all;
 
 % load the gps data
-%gpsFile = 'cartest12_14_10_11_58';
-gpsPath = '../SpanCPT/';
-gpsFile = 'span6_test3.txt';
+dataSetID = 'Test_Drive_041718';
 
-[bestVel,bestPos,bestAtt] = readGpsImu_span(gpsPath,gpsFile);
+[bestVel,bestPos,bestAtt] = readGpsImu_span(dataSetID);
 
 % gps position data
 gpsPosTime = bestPos(:,1);

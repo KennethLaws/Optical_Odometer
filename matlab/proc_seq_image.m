@@ -199,7 +199,7 @@ load([dataPath correctedDataFile ], 'imageTime', 'transltPix');
 plot_seqImg_rslt(rsltFile, correctedDataFile)
 
 % read in the range finder data
-[rngTime, rng, errCnt, meanRng] = read_rngfndr(dataSetID,rngFndrPath);
+[rngTime, rng, errCnt, meanRng] = read_rngfndr(dataSetID,imageTime);
 
 % use the translations with data rejection and gap filling done
 deltPosPix = transltPix;
@@ -210,7 +210,17 @@ deltPosMeters = compShift(deltPosPix,imageTime,meanRng);
 optTime = imageTime(:,2);   % time at the end of the measured translation, time converted to seconds
 
 % save calibrated result
-save([dataPath rsltFile '_calib.mat'], 'optTime', 'deltPosMeters');
+if exist([dataPath rsltFile '_calib.mat'])
+    s = input('calibrated data file exists, overwrite (y/n): ','s');
+    
+    if s == 'y'
+        disp 'overwriting previous calibrated data results'
+        save([dataPath rsltFile '_calib.mat'], 'optTime', 'deltPosMeters');
+    else
+        disp 'discarding new calibrated data results'
+    end 
+
+end
 
 
 
