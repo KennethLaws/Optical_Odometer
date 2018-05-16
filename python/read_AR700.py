@@ -13,7 +13,7 @@ from sensor_interface import AR700
 
 rngSnsr = AR700()
 # configure the range sensor
-dataRate = 60 					# 600 data rate in measurements per second (min value = 22)
+dataRate = 600 					# 600 data rate in measurements per second (min value = 22)
 print("configuring AR700 for %f Hz data rate" % dataRate)
 rngSnsr.configAR700(dataRate)
 

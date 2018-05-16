@@ -115,7 +115,7 @@ class AR700(object):
 				pass
 			if len(d) > 1 & len(d) < 10:
 				# print("%f, %s" % (tnow, d))
-				bigTextArray =  "%s%s\t%s" % ( bigTextArray, str(tnow), d )
+				bigTextArray =  "%s%10.6f\t%s" % ( bigTextArray, tnow, d )
 
 			# time.sleep(.001)
 		fid.write(bigTextArray)
