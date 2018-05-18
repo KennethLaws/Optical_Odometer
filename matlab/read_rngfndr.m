@@ -13,6 +13,8 @@ function [rngTime, rng, errCnt, meanRng] = read_rngfndr(runId,imageTime)
 % change log:
 % 5/1/18 - adds computation of mean rangefinder reading over image pair
 % interval and stores result in .mat file in local folder
+% 5/18/18 - changed delimiter needed to work with new rangefinder data
+% format.
 
 % if nargin < 1
 %     rngfndrFile = 'AR700.txt';
@@ -38,7 +40,7 @@ else
     fid = fopen([rngFndrPath 'AR700.txt']);
     
     % read the data
-    delimiter = ',';
+    delimiter = '\t';
     startRow = 2;
     formatSpec = '%q%q%[^\n\r]';
     data = textscan(fid, formatSpec, 'Delimiter', delimiter, 'TextType', 'string', 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');

@@ -30,7 +30,7 @@ y1 = 100;
 
 
 % read in the range finder data
-[rngTime, rng, errCnt] = read_rngfndr(dataSetID, rngFndrPath);
+%[rngTime, rng, errCnt] = read_rngfndr(dataSetID, rngFndrPath);
 
 
 
@@ -72,7 +72,7 @@ while 1
     %deltPosPix = [72 35]  % debug test
 
     % convert to caibrated measure of translation (m)
-    deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
+    %deltPosMeters = compShift(deltPosPix,imageTime,rngTime,rng);
 
 
     % generate plots and outputs
@@ -135,8 +135,8 @@ while 1
     fprintf('processing matrix dimensions: (%d, %d)\n',yPix,xPix);
     fprintf('retrieved position: (%d, %d)\n',ypeak,xpeak);
     fprintf('retrieved position shift: dy = %d pix, dx = %d pix\n',deltPosPix);
-    fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltPosMeters);
-    fprintf('retrieved speed in y: %0.3f m/s\n',deltPosMeters(1)*156.2);
+    %fprintf('retrieved position shift: dy = %0.3e m, dx = %0.3e m\n',deltPosMeters);
+    %fprintf('retrieved speed in y: %0.3f m/s\n',deltPosMeters(1)*156.2);
 %     fprintf('data rejection: r:%d snr:%0.1f FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...
 %         reject,snr_db,fracSat,fracBlk,normDiff,edgeLim,BLK,SAT,MSMTCH);
     fprintf('data rejection: r:%d FS:%0.2f FB:%0.2f ND:%0.0f E:%d B:%d S:%d M:%d\n', ...

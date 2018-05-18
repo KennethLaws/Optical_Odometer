@@ -3,8 +3,11 @@
 %                   :: Here Technologies
 % Creation Date     :: 10/16/2017
 %
-% Evaluates a comparison between gps and image derives distance travelled
+% Evaluates a comparison between gps and image derived distance travelled
+% and finds optimal values for dynamically adjusted rangefinder-based  
+% calibration of optical translations using a minimization technique.
 %
+% ***********************************************************************
 % change log
 % 5/1/18 fix bug change of gap filled outlier rejected data variable name
 % fix bug that rangefinder data was not being computed for each image pair

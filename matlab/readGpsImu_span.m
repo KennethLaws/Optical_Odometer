@@ -27,6 +27,9 @@ else
     bestVel = [];
     insAtt = [];
     
+    % read header line
+    fgetl(fid);
+    
     while ~feof(fid)
         textLine = fgetl(fid);
         fields = strfind(textLine,',');
